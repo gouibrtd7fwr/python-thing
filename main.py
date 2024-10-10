@@ -7,6 +7,7 @@ plrPos = (0,0)
 currentRoom = 0
 currentInventory = []
 
+# funcs
 def movePlr(direction):
     global plrPos
     global currentRoom
@@ -19,7 +20,7 @@ def movePlr(direction):
                 if 'Key' in room['inventory']:
                     item = {'name': 'Key', 'pos': plrPos}
                     currentInventory.append(item)
-                    print('// You just got a', item['name'], '! Your current inventory is:', currentInventory)
+                    print('// You just got a', item['name'] + '! Your current inventory is:', currentInventory)
             if newPos == exitPlace[currentRoom]:
                 currentRoom += 1
                 print('// You moved to the next room! //')
@@ -31,7 +32,6 @@ def movePlr(direction):
         else:
             print('no.')
 
-# funcs
 def startnew():
     clearScreen()
     input('// Enter to Start //')
