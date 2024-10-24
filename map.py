@@ -1,13 +1,14 @@
+import enemy
 mapWidth = 6
 mapHeight = 6
 
 room1 = {
     (0, 0): {'roomDesc': 'Starter Room with a power box', 'inventory':[]},
     (0, 1): {'roomDesc': 'Corridor', 'inventory':[]},
-    (1, 1): {'roomDesc': 'Creepy Room with a key', 'inventory':['Key']},
+    (1, 1): {'roomDesc': 'Creepy Room with a key', 'inventory':['key']},
     (1, 0): {'roomDesc': 'Graffitied Room dimly lit', 'inventory':[]},
-    (2, 0): {'roomDesc': 'Dark and scary room', 'inventory':[]},
-    (1, 2): {'roomDesc': 'Haunted room', 'inventory':[]},
+    (2, 0): {'roomDesc': 'Dark and scary room', 'inventory':[], 'enemies':enemy.enemies[0]},
+    (1, 2): {'roomDesc': 'Haunted room', 'inventory':[], 'enemies':enemy.enemies[0]},
     (2, 1): {'roomDesc': 'Portal to another dimension', 'inventory':[]},
     (2, 2): {'roomDesc': 'Sleeping room', 'inventory':[]},
     (0, 2): {'roomDesc': 'Abandoned store still with 1 person', 'inventory':[]},
