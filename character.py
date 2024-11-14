@@ -11,7 +11,7 @@ def showEnemy(enemy : dict):
         print(f'// Abilities: Healing: {enemy["healing"]} every {enemy["healcld"]} seconds. //')
 
 def showPlr(plr):
-    print(f'// Player stats: HP: {plr["hp"]}, DMG: {plr["damage"]}, Cooldown: {plr["cld"]} seconds, Coins: {plr['coins']} coins. //')
+    print(f'// Player stats: HP: {math.floor(plr["hp"])}, DMG: {plr["damage"]}, Cooldown: {plr["cld"]} seconds, Coins: {plr['coins']} coins. //')
 
 def fight(enemy, player):
     seconds = 0
