@@ -7,8 +7,42 @@ yellow = (255, 246, 179)
 black = (0,0,0)
 green = (183, 255, 203)
 red = (255, 100, 100)
-enemy_assets = ['assets/enemy_lvl_1.png','assets/enemy_lvl_2.png','assets/enemy_lvl_3.png','assets/enemy_lvl_4.png','assets/enemy_lvl_5.png','assets/enemy_lvl_6.png','assets/enemy_lvl_7.png','assets/enemy_lvl_8.png']
 
+enemy_assets = ['assets/enemy_lvl_1.png','assets/enemy_lvl_2.png','assets/enemy_lvl_3.png','assets/enemy_lvl_4.png','assets/enemy_lvl_5.png','assets/enemy_lvl_6.png','assets/enemy_lvl_7.png','assets/enemy_lvl_8.png']
+level_dicts = [
+    {
+        'level': 1,
+        'proportion': [100,0,0,0,0,0,0,0]
+    },
+    {
+        'level': 2,
+        'proportion': [40,50,10,0,0,0,0,0]
+    },
+    {
+        'level': 3,
+        'proportion': [25,35,35,5,0,0,0,0]
+    },
+    {
+        'level': 4,
+        'proportion': [5,20,30,35,7,3,0,0]
+    },
+    {
+        'level': 5,
+        'proportion': [0,10,15,20,35,8,2,0]
+    },
+    {
+        'level': 6,
+        'proportion': [0,2,5,10,25,40,10,8]
+    },
+    {
+        'level': 7,
+        'proportion': [0,0,1,4,10,15,50,25]
+    },
+    {
+        'level': 8,
+        'proportion': [0,0,0,0,2,8,15,75]
+    },
+]
 # initialize
 pygame.init()
 clock = pygame.time.Clock()
@@ -89,10 +123,6 @@ class Enemy(Image):
             self.image = pygame.image.load(enemy_assets[self.level])
             return True
 
-# images/assets
-ball = Image('assets/ball.png', 200, 200, 50, 50)
-platform = Image('assets/platform.png', platform_x, platform_y, 60, 10)
-
 # monster function
 for i in range(rows):
     y = m_y + (55*i)
@@ -154,76 +184,82 @@ def waiting_level(level, time_allowed):
 waiting_screen()
 window.fill(yellow)
 running = True
+
+for level in range(len(level_dicts)):
+    # images/assets
+    ball = Image('assets/ball.png', 200, 200, 50, 50)
+    platform = Image('assets/platform.png', platform_x, platform_y, 60, 10)
+
     # main loop
-while running:
-    window.fill(yellow)
-    ball.fill()
-    platform.fill()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                move_left = True
-            if event.key == pygame.K_d:
-                move_right = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                move_left = False
-            if event.key == pygame.K_d:
-                move_right = False
-    # movement of the platform
-    if move_left:
-        platform.rect.x -= 5
-    if move_right:
-        platform.rect.x += 5
+    while running:
+        window.fill(yellow)
+        ball.fill()
+        platform.fill()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                    running = False
+                    pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    move_left = True
+                if event.key == pygame.K_d:
+                    move_right = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    move_left = False
+                if event.key == pygame.K_d:
+                    move_right = False
+        # movement of the platform
+        if move_left:
+            platform.rect.x -= 5
+        if move_right:
+            platform.rect.x += 5
 
-    # border
-    if platform.rect.x > 400:
-        platform.rect.x = 400
-    if platform.rect.x < 0:
-        platform.rect.x = 0
-    
-    # ball moving
-    ball.rect.x += ball_x
-    ball.rect.y += ball_y
-
-    # ball bounce
-    if ball.rect.y < 0:
-        ball_y *= -1
-    if ball.rect.x <= 0:
-        ball_x *= -1
-        ball.rect.x += 2
-    if ball.rect.x >= 450:
-        ball_x *= -1
-        ball.rect.x -= 2
-    if ball.rect.colliderect(platform.rect):
-        ball_y *= -1
-        ball.rect.x -= 3
+        # border
+        if platform.rect.x > 400:
+            platform.rect.x = 400
+        if platform.rect.x < 0:
+            platform.rect.x = 0
         
-    for m in monsters:
-        m.draw()
-        if m.rect.colliderect(ball.rect):
-            if not m.hit_or_delete():
-                monsters.remove(m)
-            m.fill()
+        # ball moving
+        ball.rect.x += ball_x
+        ball.rect.y += ball_y
+
+        # ball bounce
+        if ball.rect.y < 0:
             ball_y *= -1
-            number += 1
-    
-    if ball.rect.y > 450:
-        lose = Label(0,0,500,500,red)
-        lose.set_text('YOU LOST!', 30, black)
-        lose.draw(150,150)
-        run = False
+        if ball.rect.x <= 0:
+            ball_x *= -1
+            ball.rect.x += 2
+        if ball.rect.x >= 450:
+            ball_x *= -1
+            ball.rect.x -= 2
+        if ball.rect.colliderect(platform.rect):
+            ball_y *= -1
+            ball.rect.x -= 3
+            
+        for m in monsters:
+            m.draw()
+            if m.rect.colliderect(ball.rect):
+                if not m.hit_or_delete():
+                    monsters.remove(m)
+                m.fill()
+                ball_y *= -1
+                number += 1
+        
+        if ball.rect.y > 450:
+            lose = Label(0,0,500,500,red)
+            lose.set_text('YOU LOST!', 30, black)
+            lose.draw(150,150)
+            run = False
 
-    if len(monsters) == 0:
-        win = Label(0,0,500,500,green)
-        win.set_text('You win!', 30, black)
-        win.draw(150, 150)
-        run = False
+        if len(monsters) == 0:
+            win = Label(0,0,500,500,green)
+            win.set_text('You win!', 30, black)
+            win.draw(150, 150)
+            run = False
 
-    ball.draw()
-    platform.draw()
-    pygame.display.update()
-    clock.tick(fps)
+        ball.draw()
+        platform.draw()
+        pygame.display.update()
+        clock.tick(fps)
