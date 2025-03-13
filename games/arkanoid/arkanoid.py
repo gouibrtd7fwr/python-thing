@@ -7,6 +7,7 @@ yellow = (255, 246, 179)
 black = (0,0,0)
 green = (183, 255, 203)
 red = (255, 100, 100)
+enemy_assets = ['assets/enemy_lvl_1.png','assets/enemy_lvl_2.png','assets/enemy_lvl_3.png','assets/enemy_lvl_4.png','assets/enemy_lvl_5.png','assets/enemy_lvl_6.png','assets/enemy_lvl_7.png','assets/enemy_lvl_8.png']
 
 # initialize
 pygame.init()
@@ -73,16 +74,31 @@ class Label(Area):
         self.fill()
         window.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
 
+class Enemy(Image):
+    def __init__(self, enemy_assets, x=0, y=0, width=10, height=10, level=0):
+        Area.__init__(self, x=x, y=y, width=width, height=height, color=None)
+        self.image = pygame.image.load(enemy_assets[level])
+        self.level = level
+        self.level_cap = len(enemy_assets) - 1
+
+    def hit_or_delete(self):
+        if self.level == 0:
+            return False
+        else:
+            self.level -= 1
+            self.image = pygame.image.load(enemy_assets[self.level])
+            return True
+
 # images/assets
-ball = Image('ball.png', 200, 200, 50, 50)
-platform = Image('platform.png', platform_x, platform_y, 60, 10)
+ball = Image('assets/ball.png', 200, 200, 50, 50)
+platform = Image('assets/platform.png', platform_x, platform_y, 60, 10)
 
 # monster function
 for i in range(rows):
     y = m_y + (55*i)
     x = m_x + (27.5*i)
     for j in range(count):
-        monster = Image('enemy.png', x, y, 50, 50)
+        monster = Enemy(enemy_assets, x, y, 50, 50, 2)
         monsters.append(monster)
         x += 55
     count -= 1
@@ -113,7 +129,7 @@ def waiting_screen():
         pygame.display.update()
         clock.tick(40)
 
-def waiting_level(level, time_allowed, points_need):
+def waiting_level(level, time_allowed):
     window.fill(yellow)
     waiting = True
     levels = Label(50,100,400,50,green)
@@ -189,7 +205,8 @@ while running:
     for m in monsters:
         m.draw()
         if m.rect.colliderect(ball.rect):
-            monsters.remove(m)
+            if not m.hit_or_delete():
+                monsters.remove(m)
             m.fill()
             ball_y *= -1
             number += 1
