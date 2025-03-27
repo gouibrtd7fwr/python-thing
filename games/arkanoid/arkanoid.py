@@ -1,4 +1,7 @@
 import pygame
+from math import *
+from random import *
+from time import *
 
 # colors/palette
 blue = (106, 128, 185)
@@ -52,14 +55,14 @@ running = True
 
 # variables
 fps = 60
-count = 9
+count = 2
 rows = 2
 
 platform_x = 220
 platform_y = 400
 
-ball_x = 3
-ball_y = 3
+ball_x = 5
+ball_y = 5
 
 m_x = 5
 m_y = 5
@@ -123,15 +126,6 @@ class Enemy(Image):
             self.image = pygame.image.load(enemy_assets[self.level])
             return True
 
-# monster function
-for i in range(rows):
-    y = m_y + (55*i)
-    x = m_x + (27.5*i)
-    for j in range(count):
-        monster = Enemy(enemy_assets, x, y, 50, 50, 2)
-        monsters.append(monster)
-        x += 55
-    count -= 1
 # waiting screen
 def waiting_screen():
     window.fill(blue)
@@ -159,16 +153,28 @@ def waiting_screen():
         pygame.display.update()
         clock.tick(40)
 
-def waiting_level(level, time_allowed):
+def losing_screen():
+    window.fill(blue)
+    waiting = True
+    title = Label(50,100,400,50,red)
+    title.set_text('YOU LOST!', 35, black)
+    title.draw(10, 10)
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                waiting = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                waiting = False
+                window.fill(yellow)
+        pygame.display.update()
+        clock.tick(40)
+
+def waiting_level(level):
     window.fill(yellow)
     waiting = True
     levels = Label(50,100,400,50,green)
     levels.set_text('You are in Level ' + str(level), 35, black)
     levels.draw(10, 10)
-
-    info = Label(50,200,400,50,green)
-    info.set_text('Time: '+ str(time_allowed),20,black)
-    info.draw(10,10)
 
     while waiting:
         for event in pygame.event.get():
@@ -184,8 +190,53 @@ def waiting_level(level, time_allowed):
 waiting_screen()
 window.fill(yellow)
 running = True
+losing = False
 
 for level in range(len(level_dicts)):
+    if losing:
+        break
+    # monster function
+    total_enemy = 0
+    no_enemy_in_row = count
+    for i in range(rows):
+        for j in range(no_enemy_in_row):
+            total_enemy += 1
+        no_enemy_in_row -= 1
+    print(total_enemy)
+
+    enemy_proportion = []
+    cur_enemy = total_enemy
+    for i in range(len(enemy_assets)):
+        num_of_enemy = ceil(level_dicts[level]["proportion"][i] * total_enemy / 100)
+        if cur_enemy < num_of_enemy:
+            num_of_enemy = cur_enemy
+        else:
+            cur_enemy - num_of_enemy
+        cur_enemy -= num_of_enemy
+        enemy_proportion.append(num_of_enemy)
+        print(num_of_enemy)
+        print(cur_enemy)
+        print(enemy_proportion)
+
+    clone_enemy = []
+    enemy_level = 1
+    for number_enemy_in_proportion in enemy_proportion:
+        for i in range(number_enemy_in_proportion):
+            clone_enemy.append(Enemy(enemy_assets, 5, 5, 50, 50, enemy_level - 1))
+        enemy_level += 1
+    shuffle(clone_enemy)
+
+    enemy_count = 0
+    no_enemy_in_row = count
+    for i in range(rows):
+        y = m_y + (55*i)
+        x = m_x + (27.5*i)
+        for j in range(count):
+            monster = Enemy(enemy_assets, x, y, 50, 50, clone_enemy[enemy_count].level)
+            monsters.append(monster)
+            x += 55
+            enemy_count += 1
+        count -= 1
     # images/assets
     ball = Image('assets/ball.png', 200, 200, 50, 50)
     platform = Image('assets/platform.png', platform_x, platform_y, 60, 10)
@@ -198,6 +249,7 @@ for level in range(len(level_dicts)):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                     running = False
+                    losing = True
                     pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
@@ -211,9 +263,9 @@ for level in range(len(level_dicts)):
                     move_right = False
         # movement of the platform
         if move_left:
-            platform.rect.x -= 5
+            platform.rect.x -= 7
         if move_right:
-            platform.rect.x += 5
+            platform.rect.x += 7
 
         # border
         if platform.rect.x > 400:
@@ -236,7 +288,7 @@ for level in range(len(level_dicts)):
             ball.rect.x -= 2
         if ball.rect.colliderect(platform.rect):
             ball_y *= -1
-            ball.rect.x -= 3
+            ball.rect.y -= 5
             
         for m in monsters:
             m.draw()
@@ -248,18 +300,20 @@ for level in range(len(level_dicts)):
                 number += 1
         
         if ball.rect.y > 450:
-            lose = Label(0,0,500,500,red)
-            lose.set_text('YOU LOST!', 30, black)
-            lose.draw(150,150)
-            run = False
+            losing = True
+            running = False 
 
         if len(monsters) == 0:
             win = Label(0,0,500,500,green)
             win.set_text('You win!', 30, black)
             win.draw(150, 150)
-            run = False
+            running = False
 
         ball.draw()
         platform.draw()
         pygame.display.update()
         clock.tick(fps)
+    if losing:
+        losing_screen()
+        break
+    waiting_level(level=level+1)
