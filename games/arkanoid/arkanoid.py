@@ -74,9 +74,6 @@ move_down = False
 move_right = False
 move_left = False
 
-# others
-monsters = []
-
 # classes
 class Area():
     def __init__(self, x=0, y=0, width=10, height=10, color=None):
@@ -196,6 +193,7 @@ for level in range(len(level_dicts)):
     if losing:
         break
     # monster function
+    monsters = []
     total_enemy = 0
     no_enemy_in_row = count
     for i in range(rows):
