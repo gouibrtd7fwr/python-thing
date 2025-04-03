@@ -144,6 +144,7 @@ def waiting_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 waiting = False
+                pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 waiting = False
                 window.fill(yellow)
@@ -160,6 +161,7 @@ def losing_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 waiting = False
+                pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 waiting = False
                 window.fill(yellow)
@@ -177,6 +179,7 @@ def waiting_level(level):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 waiting = False
+                pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 waiting = False
                 window.fill(yellow)
@@ -190,6 +193,7 @@ running = True
 losing = False
 
 for level in range(len(level_dicts)):
+    running = True
     if losing:
         break
     # monster function
@@ -229,17 +233,18 @@ for level in range(len(level_dicts)):
     for i in range(rows):
         y = m_y + (55*i)
         x = m_x + (27.5*i)
-        for j in range(count):
+        for j in range(no_enemy_in_row):
             monster = Enemy(enemy_assets, x, y, 50, 50, clone_enemy[enemy_count].level)
             monsters.append(monster)
             x += 55
             enemy_count += 1
-        count -= 1
+        no_enemy_in_row -= 1
     # images/assets
     ball = Image('assets/ball.png', 200, 200, 50, 50)
     platform = Image('assets/platform.png', platform_x, platform_y, 60, 10)
 
     # main loop
+    running = True
     while running:
         window.fill(yellow)
         ball.fill()
@@ -302,9 +307,7 @@ for level in range(len(level_dicts)):
             running = False 
 
         if len(monsters) == 0:
-            win = Label(0,0,500,500,green)
-            win.set_text('You win!', 30, black)
-            win.draw(150, 150)
+            waiting_level(level=level+1)
             running = False
 
         ball.draw()
@@ -314,5 +317,3 @@ for level in range(len(level_dicts)):
     if losing:
         losing_screen()
         break
-    waiting_level(level=level+1)
-    running = True
