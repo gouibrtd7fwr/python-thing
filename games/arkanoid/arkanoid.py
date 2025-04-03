@@ -317,3 +317,4 @@ for level in range(len(level_dicts)):
         losing_screen()
         break
     waiting_level(level=level+1)
+    running = True
