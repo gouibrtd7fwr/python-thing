@@ -55,7 +55,7 @@ running = True
 
 # variables
 fps = 60
-count = 2
+count = 9
 rows = 2
 
 platform_x = 220
@@ -91,7 +91,7 @@ class Area():
     def collidepoint(self, x, y):
         return self.rect.collidepoint(x, y)
     def colliderect(self, rect):
-        return self.rect.collidepoint()
+        return self.rect.collidepoint(rect)
 class Image(Area):
     def __init__(self, file_name, x=0, y=0, width=10, height=10):
         Area.__init__(self, x=x, y=y, width=width, height=height, color=None)
