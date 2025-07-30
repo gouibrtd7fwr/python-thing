@@ -4,16 +4,19 @@ from map_manager import MapManager
 from player import Player
 from utils import clear_screen, get_input
 
+directions = [(1,0), (-1,0), (0,-1), (0,1)]
 class GameEngine:
     def __init__(self):
         # Initialize map manager and player
         # Set a variable to keep the game running
-        self.map_manager = None  # Replace with actual MapManager instance
-        self.player = None       # Replace with Player starting at correct position
-        self.running = None      # Replace with True
+        self.map_manager = MapManager  # Replace with actual MapManager instance
+        self.player = Player       # Replace with Player starting at correct position
+        self.running = True      # Replace with True
         pass
 
     def run(self):
+        while self.running == True:
+            clear_screen()
         # Main game loop
         # - Clear screen
         # - Get current room

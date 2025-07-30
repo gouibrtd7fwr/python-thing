@@ -14,7 +14,7 @@ class Room:
         self.description = "A plain room."
 
     def enter(self, player, map_manager, just_describe=False):
-        # Print current position and description
+        print('You are at', self.pos, 'Description:', self.description)
         # If not just_describe, trigger interact()
         # Else, briefly pause for flavor
         pass
