@@ -11,12 +11,12 @@ class Player:
         self.inventory = {}
         self.cash = 0
         self.armor = [
-            ['head', '', 0]
-            ['body', '', 0]
-            ['legs', '', 0]
+            ['head', '', 0],
+            ['body', '', 0],
+            ['legs', '', 0],
             ['boot', '', 0]
         ]
-        self.start_pos = (0,0)
+        self.position = start_pos
         self.visited_rooms = [(0,0)]
         self.total_str = [0, 0]#used for further calculations.
         # - position (start_pos)
@@ -65,11 +65,11 @@ class Player:
         # - Indicate temporary effects with an asterisk
         pass
 
-    #def remove_temp_effect(self):
-        # Remove any temporary attack/defense bonuses
-        # - Subtract temp_attack and temp_defense from current stats
-        # - Reset temp values to 0
-        pass
+    # def remove_temp_effect(self):
+    #     Remove any temporary attack/defense bonuses
+    #     - Subtract temp_attack and temp_defense from current stats
+    #     - Reset temp values to 0
+    #     pass
 
     def add_item(self, item):
         self.inventory.append(item)
