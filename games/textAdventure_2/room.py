@@ -107,10 +107,18 @@ class BossRoom(Room):
 class LootRoom(Room):
     def __init__(self, pos):
         super().__init__(pos)
+        self.items_inside_chest = 1
         self.description = "You find a chest with something inside it..."
-        self.defeated = False
+        self.inventory = random.sample(item_pool, k=self.items_inside_chest)
 
     def interact(self, player, map_manager):
+        for i in range(len(self.inventory)):
+            print(f"You found: {self.inventory[i][0]}!")
+            self.taking = ('Do you want to take this?')
+            if self.taking == True:
+                player.inventory.append(self.inventory[i])
+            else:
+                pass
         # If defeated: show message
         # Else:
         #   Ask player to fight

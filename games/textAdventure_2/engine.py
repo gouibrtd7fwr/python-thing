@@ -49,8 +49,14 @@ class GameEngine:
         pass
 
     def move_player(self, direction):
+        pos = self.map_manager.calculate_new_position(self.player.position, direction)
+        if self.map_manager.is_valid_position(pos):
+            self.player.position == pos
+            self.player.update_position(self.player.position)
+            room_type = self.map_manager.get_room(self.player.position)
+            
         # Calculate new position based on direction (w/a/s/d)
-        # If valid:
+        # If valid:``
         #   - Update player position
         #   - Describe the room (not interact)
         #   - Remove temporary effects
