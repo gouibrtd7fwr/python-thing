@@ -1,2 +1,3 @@
 # python thing
- python
+ALPHA VERSION releasing soon.
+Python stuff lol
