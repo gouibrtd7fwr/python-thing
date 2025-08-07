@@ -36,9 +36,9 @@ class Player:
         pass
 
     def update_position(self, new_pos):
+        self.position = new_pos
         self.visited_rooms.append(new_pos)
-        # Update player's position and add it to visited_rooms
-        pass
+
 
     def show_inventory(self):
         # Show inventory menu:

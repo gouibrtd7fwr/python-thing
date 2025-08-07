@@ -24,7 +24,7 @@ class GameEngine:
             if command in ['w','a','s','d']:
                 self.move_player(command)
             elif command == 'e':
-                self.interact_room()
+                self.interact_room(current_pos)
             elif command == 'o':
                 self.save_game()
             elif command == 'i':
@@ -39,42 +39,25 @@ class GameEngine:
             else:
                 print('Command not found.')
                 command = get_input("Enter command: w/a/s/d: Move, e: Interact, o: Save, i: Load, l: Stats, p: Inventory, q: Quit\n")
-        # Main game loop
-        # - Clear screen
-        # - Get current room
-        # - Display map and room description
-        # - Show UI
-        # - Handle player input
-        #   (move, interact, inventory, stats, save, load, quit)
-        pass
 
     def move_player(self, direction):
         pos = self.map_manager.calculate_new_position(self.player.position, direction)
         if self.map_manager.is_valid_position(pos):
-            self.player.position == pos
-            self.player.update_position(self.player.position)
+            self.player.update_position(pos)
             room_type = self.map_manager.get_room(self.player.position)
-            
-        # Calculate new position based on direction (w/a/s/d)
-        # If valid:``
-        #   - Update player position
-        #   - Describe the room (not interact)
-        #   - Remove temporary effects
-        # Else:
-        #   - Tell the player they can't move there
-        pass
 
+            room_type.enter(self.player, self.map_manager, just_describe=True)
+        else:
+            print('You can\'t move there!')
+            input("Press Enter to continue...")
+  
     def interact_room(self, room):
         room.enter(self.player, self.map_manager, False)
-        # Call room.enter() with just_describe = False
-        # This means interacting, not just viewing
-        pass
 
     def display_ui(self):
         print('\n--Controls--')
         print('w/a/s/d: Move, e: Interact, o: Save, i: Load, l: Stats, p: Inventory')
         print('\nLegend: O: You, x: Empty, E: Enemy, $: Shop, @: Portal, !: Loot')
-        pass
 
     def save_game(self):
         # Save map_manager and player to a file using pickle
