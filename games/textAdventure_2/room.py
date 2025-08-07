@@ -16,7 +16,8 @@ class Room:
     def enter(self, player, map_manager, just_describe=False):
         print('You are at', self.pos, 'Description:', self.description)
         if just_describe == False:
-            self.interact()
+            self.interact(player, map_manager)
+        sleep(1)    
         # If not just_describe, trigger interact()
         # Else, briefly pause for flavor
         pass
