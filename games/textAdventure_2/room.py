@@ -43,8 +43,9 @@ class MonsterRoom(Room):
         if self.defeated:
             print('The corpse of the monster lays dead in front of you')
         else:
-            fight = input('Do you want to fight? (y/n)').lower()
-            if fight == 'y':
+            fight = get_input("Do you want to fight it? (E)")
+            if fight.lower() == 'e':
+                print('The fight has started!')
                 self.hp -= player.damage
                 player.health -= self.damage
             else:
@@ -98,6 +99,16 @@ class BossRoom(Room):
         self.defeated = False
 
     def interact(self, player, map_manager):
+        if self.defeated:
+            print('The remains of the large boss lay here in this room.')
+        else:
+            fight = get_input("Do you want to fight it? (E)")
+            if fight.lower() == 'e':
+                print('The fight has started!')
+                self.hp -= player.damage
+                player.health -= self.damage
+            else:
+                print('You chose to not fight the boss.')
         # If defeated: show message
         # Else:
         #   Ask player to fight
@@ -108,18 +119,20 @@ class BossRoom(Room):
 class LootRoom(Room):
     def __init__(self, pos):
         super().__init__(pos)
+        self.looted = False
         self.items_inside_chest = 1
         self.description = "You find a chest with something inside it..."
-        self.inventory = random.sample(item_pool, k=self.items_inside_chest)
+        self.loot = random.sample(item_pool, k=self.items_inside_chest)
 
     def interact(self, player, map_manager):
-        for i in range(len(self.inventory)):
-            print(f"You found: {self.inventory[i][0]}!")
-            self.taking = ('Do you want to take this?')
-            if self.taking == True:
-                player.inventory.append(self.inventory[i])
-            else:
-                pass
+        if self.looted == False:
+            for i in range(len(self.loot)):
+                print(f"You found: {self.loot[i].name}!")
+                player.inventory.append(self.loot[i])
+                self.looted = True
+            input()
+        else:
+            print('You have already looted this room.')
         # If defeated: show message
         # Else:
         #   Ask player to fight

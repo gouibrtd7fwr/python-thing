@@ -1,24 +1,25 @@
-'''
-    This is the player class template, you can base on this and create the base class (character) and plan out the monster, item classes. 
-'''
+from utils import get_input
+import inquirer
+from data.items import *
 
 class Player:
-    def __init__(self, start_pos):
+    def __init__(self, name, start_pos):
         # Initialize player attributes:
-        self.health = self.max_hp = [100, 0]
-        self.damage = [5, 0]
+        self.name = name
+        self.health = self.max_hp = {"base": 100, "temp": 0}
+        self.damage = {"base": 5, "temp": 0}
         self.weapon = "Fists"
         self.inventory = []
         self.cash = 0
         self.armor = [
-            ['head', '', 0],
-            ['body', '', 0],
-            ['legs', '', 0],
-            ['boot', '', 0]
+            {"type": "head", "name": "", "strength": 0},
+            {"type": "body", "name": "", "strength": 0},
+            {"type": "legs", "name": "", "strength": 0},
+            {"type": "boot", "name": "", "strength": 0}
         ]
         self.position = start_pos
         self.visited_rooms = [(0,0)]
-        self.total_str = [0, 0]#used for further calculations.
+        self.total_str = {"base": 0, "temp": 0}#used for further calculations.
         # - position (start_pos)
         # - gold = 100
         # - hp = max_hp = 100
@@ -31,8 +32,8 @@ class Player:
         pass
 
     def calc_total_str(self):
-        for i in range(len(self.armor)):
-            self.total_str[0] += self.armor[i][2]
+        for piece in range(self.armor):
+            self.total_str["base"] += piece["stats"]
         pass
 
     def update_position(self, new_pos):
@@ -75,7 +76,7 @@ class Player:
         self.calc_total_str()
         print('-- STATS --')
         # print('* means temporary effects!')
-        print(f"HP: {self.health[0]}, Damage: {self.damage[0]}, Defense: {self.total_str[0]}, Coins: {self.cash}")
+        print(f"HP: {self.health["base"]}, Damage: {self.damage["base"]}, Defense: {self.total_str["base"]}, Coins: {self.cash}")
         # Display player stats:
         # - HP, attack, defense, gold
         # - Indicate temporary effects with an asterisk
