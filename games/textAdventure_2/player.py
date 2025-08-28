@@ -4,22 +4,24 @@
 from utils import get_input
 import inquirer
 from data.items import *
+import time
 
 class Player:
     def __init__(self, start_pos):
         # Initialize player attributes:
         # self.name = name
-        self.health = self.max_hp = {"base": 100, "temp": 0}
+        self.health = {"base": 100, "temp": 0, "maximum": 100}
         self.damage = {"base": 5, "temp": 0}
-        self.weapon = "Fists"
+        self.weapon = {"name": "Fists", "strength": 0}
+        self.offhand = {"name": "Nothing", "strength": 0}
         self.inventory = {}
         self.cash = 0
-        self.armor = [
-            {"type": "head", "name": "", "strength": 0},
-            {"type": "body", "name": "", "strength": 0},
-            {"type": "legs", "name": "", "strength": 0},
-            {"type": "boot", "name": "", "strength": 0}
-        ]
+        self.armor = {
+            "head": {"name": "", "strength": 0},
+            "body": {"name": "", "strength": 0},
+            "legs": {"name": "", "strength": 0},
+            "boot": {"name": "", "strength": 0},
+        }
         self.position = start_pos
         self.visited_rooms = [(0,0)]
         self.total_str = {"base": 0, "temp": 0}#used for further calculations.
@@ -35,8 +37,9 @@ class Player:
         pass
 
     def calc_total_str(self):
-        for i in range(len(self.armor)):
-            self.total_str[0] += self.armor[i][2]
+        for part in self.armor.keys():
+            self.total_str['base'] = 0
+            self.total_str['base'] += self.armor[part]['strength']
         pass
 
     def update_position(self, new_pos):
@@ -68,6 +71,10 @@ class Player:
 
                 answers = inquirer.prompt(questions)
                 selected = answers["item_chosen"]
+
+                used = inv[selected]
+                used.apply(self)
+
                 index = choices.index(selected)
                 inv.pop(keys[index])
         input("Press enter to continue.")
@@ -83,7 +90,8 @@ class Player:
         self.calc_total_str()
         print('-- STATS --')
         # print('* means temporary effects!')
-        print(f"HP: {self.health[0]}, Damage: {self.damage[0]}, Defense: {self.total_str[0]}, Coins: {self.cash}")
+        print(f"HP: {self.health['base']}, Damage: {self.damage['base'] + self.weapon['strength']}, Defense: {self.total_str['base'] + self.offhand['strength']}, Coins: {self.cash}")
+        time.sleep(3)
         # Display player stats:
         # - HP, attack, defense, gold
         # - Indicate temporary effects with an asterisk

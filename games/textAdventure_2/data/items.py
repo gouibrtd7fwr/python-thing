@@ -5,7 +5,7 @@
 
 import random
 
-obj_types = ["head_armor", "body_armor", "leg_armor", "boot_armor", "att_weapon", "def_weapon", "potion"]
+obj_types = ["head_armor", "body_armor", "legs_armor", "boot_armor", "att_weapon", "def_weapon", "potion"]
 
 class Item:
     def __init__(self, name, obj_type, cost, effect_type, effect_value):
@@ -17,21 +17,32 @@ class Item:
         self.cost = cost
         self.effect_type = effect_type  # e.g., 'attack', 'defense', 'heal', 'temp_attack'
         self.effect_value = effect_value
+        # self.effect_length = effect_length
 
     def apply(self, player):
         if self.effect_type == 'attack':
-            player.attack += self.effect_value
+            player.damage['base'] += self.effect_value
+            player.weapon = {"name": self.name, "strength": self.effect_value}
         elif self.effect_type == 'defense':
-            player.defense += self.effect_value
+            if self.type == "head_armor":
+                player.armor["head"] = {"name": self.name, "strength": self.effect_value}
+            elif self.type == "body_armor":
+                player.armor["body"] = {"name": self.name, "strength": self.effect_value}
+            elif self.type == "legs_armor":
+                player.armor["legs"] = {"name": self.name, "strength": self.effect_value}
+            elif self.type == "boot_armor":
+                player.armor["boot"] = {"name": self.name, "strength": self.effect_value}
+            elif self.type == "def_weapon":
+                player.offhand = {"name": self.name, "strength": self.effect_value}
         elif self.effect_type == 'heal':
-            player.hp = min(player.max_hp, player.hp + self.effect_value)
+            player.health['base'] = player.health['base'] + self.effect_value
+            if player.health['base'] >= player.health['maximum']:
+                player.health['base'] = player.health['maximum']
         elif self.effect_type == 'temp_attack':
-            player.temp_attack += self.effect_value
-            player.attack += self.effect_value 
+            player.damage['temp'] += self.effect_value
         elif self.effect_type == 'temp_defense':
-            player.temp_defense += self.effect_value
-            player.defense += self.effect_value
-    
+            player.total_str['temp'] += self.effect_value
+        
 
 item_pool = [
     Item("Sword","att_weapon", 10, "attack", 2),
