@@ -36,7 +36,6 @@ class MapManager:
         for pos, symbol in layout.items():
             room_class = room_types.get(symbol, EmptyRoom)
             rooms[pos] = room_class(pos)
-        print(f"Generated rooms for layout: {rooms}")
         return rooms
         # For each symbol in the layout:
         # - Map it to the corresponding room type

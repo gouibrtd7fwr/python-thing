@@ -1,24 +1,28 @@
 '''
     This is the player class template, you can base on this and create the base class (character) and plan out the monster, item classes. 
 '''
+from utils import get_input
+import inquirer
+from data.items import *
 
 class Player:
     def __init__(self, start_pos):
         # Initialize player attributes:
-        self.health = self.max_hp = [100, 0]
-        self.damage = [5, 0]
+        # self.name = name
+        self.health = self.max_hp = {"base": 100, "temp": 0}
+        self.damage = {"base": 5, "temp": 0}
         self.weapon = "Fists"
-        self.inventory = []
+        self.inventory = {}
         self.cash = 0
         self.armor = [
-            ['head', '', 0],
-            ['body', '', 0],
-            ['legs', '', 0],
-            ['boot', '', 0]
+            {"type": "head", "name": "", "strength": 0},
+            {"type": "body", "name": "", "strength": 0},
+            {"type": "legs", "name": "", "strength": 0},
+            {"type": "boot", "name": "", "strength": 0}
         ]
         self.position = start_pos
         self.visited_rooms = [(0,0)]
-        self.total_str = [0, 0]#used for further calculations.
+        self.total_str = {"base": 0, "temp": 0}#used for further calculations.
         # - position (start_pos)
         # - gold = 100
         # - hp = max_hp = 100
@@ -45,11 +49,14 @@ class Player:
         if len(self.inventory) == 0:
             print('You have nothing in your inventory.')
         else:
-            for i in range(len(self.inventory)):
-                print(f"{self.inventory[i]['name']}")
+            inv = self.inventory
+            print(inv)
+            keys = list(inv.keys())
+            for i in range(len(keys)):
+                print(f"{keys[i]}")
             usage = get_input("Do you want to use an item? (y/n)")
             if usage == "y":
-                choices = [(item['name'], item) for item in self.inventory]
+                choices = [(item) for item in keys]
 
                 questions = [
                     inquirer.List(
@@ -62,7 +69,7 @@ class Player:
                 answers = inquirer.prompt(questions)
                 selected = answers["choice"]
                 index = choices.index(selected)
-        get_input("Press space to continue.")
+        get_input("Press enter to continue.")
         # - If empty: show message
         # - Else: list all items with name and effect
         # below is later implementation

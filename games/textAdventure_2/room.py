@@ -128,7 +128,7 @@ class LootRoom(Room):
         if self.looted == False:
             for i in range(len(self.loot)):
                 print(f"You found: {self.loot[i].name}!")
-                player.inventory.append(self.loot[i])
+                player.inventory[self.loot[i].name] = self.loot[i]
                 self.looted = True
             input()
         else:

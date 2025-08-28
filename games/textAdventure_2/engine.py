@@ -32,7 +32,6 @@ class GameEngine:
             elif command == 'l':
                 self.player.show_stats()
             elif command == 'p':
-                print("pressed p lol")
                 self.player.show_inventory()
                 input('')
             elif command == 'q':
