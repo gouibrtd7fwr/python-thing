@@ -67,9 +67,10 @@ class Player:
                 ]
 
                 answers = inquirer.prompt(questions)
-                selected = answers["choice"]
+                selected = answers["item_chosen"]
                 index = choices.index(selected)
-        get_input("Press enter to continue.")
+                inv.pop(keys[index])
+        input("Press enter to continue.")
         # - If empty: show message
         # - Else: list all items with name and effect
         # below is later implementation
