@@ -2,6 +2,7 @@ import random
 from data.items import item_pool
 from time import sleep
 from utils import get_input
+import inquirer
 
 '''
 This is the class where you create multiple type of rooms. Use this for structure it building other sprite classes
@@ -63,14 +64,62 @@ class StoreRoom(Room):
         super().__init__(pos)
         self.items_to_sell = 3
         self.description = "You find a market with items for sale."
-        self.inventory = random.sample(item_pool, k=self.items_to_sell)
+        self.item_pool = random.sample(item_pool, k=self.items_to_sell)
+        self.inventory = dict()
+        for item in self.item_pool:
+            self.inventory[item.name] = item
+
+    def buy(self, player, item):
+        if player.cash >= item.cost:
+            player.cash -= item.cost
+            return True
+        else:
+            return False
 
     def interact(self, player, map_manager):
         print('Welcome to the Shop!')
         print('Available items are shown below!')
         for i in range(len(self.inventory)):
-            print(f"{self.inventory[i]}")
-        print('What do you want to buy? (1 for 1st one, 2 for 2nd one,...)')
+            print("\n-- Shop --")
+            inv = self.inventory
+            keys = list(inv.keys())
+
+            for i, key in enumerate(keys, 1):
+                item = inv[key]
+                print(f"{i}. {item.name} | Type: {item.type} | Effect: {item.effect_type} +{item.effect_value} | Cost: {item.cost}")
+
+            purchase = get_input("Do you want to buy an item? (y/n)")
+            if purchase == "y":
+                choices = [(item) for item in keys]
+
+                questions = [
+                    inquirer.List(
+                        "item_chosen",
+                        message = "Which item do you want to choose?",
+                        choices = choices
+                    )
+                ]
+
+                answers = inquirer.prompt(questions)
+                selected = answers["item_chosen"]
+
+                bought = inv[selected]
+                # bought.apply(self)
+                transaction_res = self.buy(player, bought)
+                index = choices.index(selected)
+                if transaction_res == True:
+                    player.add_item(bought)
+                    inv.pop(keys[index])
+                    print('Your transaction was successful!')
+                else:
+                    print('You do not have enough money to buy this item!')
+            elif purchase == 'n':
+                pass
+            else:
+                print('Command not found.')
+                sleep(2)
+                pass
+        input("Press enter to continue.")
         # Show items in store (name + cost)
         # Let player choose item to buy
         #   - If enough gold: deduct gold, add item to inventory, remove from store

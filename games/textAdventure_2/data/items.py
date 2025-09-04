@@ -47,10 +47,10 @@ class Item:
 item_pool = [
     Item("Sword","att_weapon", 10, "attack", 2),
     Item("Shield","def_weapon", 8, "defense", 2),
-    Item("Small Health Potion","potion", 5, "heal", 10),
+    Item("Small Health Potion", "potion", 5, "heal", 10),
     Item("Axe","att_weapon", 12, "attack", 3),
     Item("Leather Helmet","head_armor", 7, "defense", 1),
-    Item("Big Health Potion", 10,"potion", "heal", 25),
+    Item("Big Health Potion", "potion", 10, "heal", 25),
     Item("Strength Potion","potion", 9, "temp_attack", 5),
     Item("Defense Potion","potion", 9, "temp_defense", 5)
 ]

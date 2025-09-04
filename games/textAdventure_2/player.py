@@ -15,7 +15,7 @@ class Player:
         self.weapon = {"name": "Fists", "strength": 0}
         self.offhand = {"name": "Nothing", "strength": 0}
         self.inventory = {}
-        self.cash = 0
+        self.cash = 15
         self.armor = {
             "head": {"name": "", "strength": 0},
             "body": {"name": "", "strength": 0},
@@ -70,7 +70,7 @@ class Player:
                         choices = choices
                     )
                 ]
-
+            
                 answers = inquirer.prompt(questions)
                 selected = answers["item_chosen"]
 
