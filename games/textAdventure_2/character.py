@@ -89,5 +89,4 @@ class Player:
     #     pass
 
     def add_item(self, item):
-        self.inventory.append(item)
-        pass
+        self.inventory[item.name] = item
