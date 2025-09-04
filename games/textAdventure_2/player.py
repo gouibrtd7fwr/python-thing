@@ -110,3 +110,4 @@ class Player:
 
     def add_item(self, item):
         self.inventory[item.name] = item
+        pass
