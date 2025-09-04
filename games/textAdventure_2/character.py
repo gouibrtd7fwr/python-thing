@@ -47,3 +47,8 @@ class Character:
     #     - Subtract temp_attack and temp_defense from current stats
     #     - Reset temp values to 0
     #     pass
+
+
+    def add_item(self, item):
+        self.inventory[item.name] = item
+

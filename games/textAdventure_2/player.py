@@ -40,7 +40,6 @@ class Player:
         self.total_str['base'] = 0
         for part in self.armor.keys():
             self.total_str['base'] += self.armor[part]['strength']
-        pass
 
     def update_position(self, new_pos):
         self.position = new_pos
@@ -52,11 +51,14 @@ class Player:
         if len(self.inventory) == 0:
             print('You have nothing in your inventory.')
         else:
+            print("\n-- INVENTORY --")
             inv = self.inventory
-            print(inv)
             keys = list(inv.keys())
-            for i in range(len(keys)):
-                print(f"{keys[i]}")
+
+            for i, key in enumerate(keys, 1):
+                item = inv[key]
+                print(f"{i}. {item.name} | Type: {item.type} | Effect: {item.effect_type} +{item.effect_value} | Cost: {item.cost}")
+
             usage = get_input("Do you want to use an item? (y/n)")
             if usage == "y":
                 choices = [(item) for item in keys]
@@ -90,7 +92,10 @@ class Player:
         self.calc_total_str()
         print('-- STATS --')
         # print('* means temporary effects!')
-        print(f"HP: {self.health['base']}, Damage: {self.damage['base'] + self.weapon['strength']}, Defense: {self.total_str['base'] + self.offhand['strength']}, Coins: {self.cash}")
+        print(f"HP: {self.health['base']}/{self.health['maximum']}")
+        print(f"Damage: {self.damage['base'] + self.weapon['strength'] + self.damage['temp']}")
+        print(f"Defense: {self.total_str['base'] + self.offhand['strength'] + self.total_str['temp']}")
+        print(f"Coins: {self.cash}")
         time.sleep(3)
         # Display player stats:
         # - HP, attack, defense, gold
