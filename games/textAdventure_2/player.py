@@ -37,8 +37,8 @@ class Player:
         pass
 
     def calc_total_str(self):
+        self.total_str['base'] = 0
         for part in self.armor.keys():
-            self.total_str['base'] = 0
             self.total_str['base'] += self.armor[part]['strength']
         pass
 
@@ -104,5 +104,5 @@ class Player:
     #     pass
 
     def add_item(self, item):
-        self.inventory.append(item)
+        self.inventory[item.name] = item
         pass
