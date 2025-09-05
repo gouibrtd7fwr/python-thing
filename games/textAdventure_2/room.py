@@ -2,6 +2,7 @@ import random
 from data.items import item_pool
 from time import sleep
 from utils import get_input
+from data.enemies import enemy_pool
 import inquirer
 
 '''
@@ -39,16 +40,24 @@ class MonsterRoom(Room):
         super().__init__(pos)
         self.description = "A monster blocks your path!"
         self.defeated = False
+        # self.enemies_to_fight = 1
+        self.enemy_pool = random.sample(enemy_pool, k=1)
+        self.enemy_name = self.enemy_pool[0].name
+        self.enemy = {str(self.enemy_name): self.enemy_pool[0]}
 
     def interact(self, player, map_manager):
         if self.defeated:
             print('The corpse of the monster lays dead in front of you')
         else:
-            fight = get_input("Do you want to fight it? (E)")
+            fight = get_input(f"Do you want to fight it? (E)")
             if fight.lower() == 'e':
-                print('The fight has started!')
-                self.hp -= player.damage
-                player.health -= self.damage
+                print('\nThe fight has started!')
+                self.enemy_util = self.enemy[self.enemy_name]
+                while player.health['base'] > 0 and self.enemy_util.health > 0:
+                    self.enemy_util.health -= player.damage['base']
+                    player.health['base'] -= self.enemy_util.damage
+                    print(f"Your health: {player.health['base']}, Monster's health: {self.enemy_util.health}")
+                    sleep(1)
             else:
                 print('You chose to not fight the monster.')
         # If defeated: print remains
