@@ -72,6 +72,7 @@ class MonsterRoom(Room):
                 elif self.enemy_util.health <= 0:
                     print('You have defeated the monster!')
                     self.defeated = True
+                    player.cash += self.enemy_util.coin_amt
                     self.description = 'The corpse of the monster lays dead in front of you'
             else:
                 print('You chose to not fight the monster.')
@@ -187,7 +188,7 @@ class BossRoom(Room):
                 self.enemy_util = self.enemy[self.enemy_name]
 
                 while player.health['base'] > 0 and self.enemy_util.health > 0:
-                    self.enemy_util.health -= player.damage['base']
+                    self.enemy_util.health -= player.damage['base'] + player.weapon['strength'] + player.damage['temp']
                     player.health['base'] -= self.enemy_util.damage
                     if player.health['base'] <= 0:
                         player.health['base'] = 0
@@ -202,6 +203,7 @@ class BossRoom(Room):
                 elif self.enemy_util.health <= 0:
                     print('You have defeated the boss!')
                     self.defeated = True
+                    player.cash += self.enemy_util.coin_amt
                     self.description = 'The corpse of the monster lays dead in front of you'
                     player.inventory[self.enemy_util.drop_key.name] = self.enemy_util.drop_key
                     print(f'You found a {self.enemy_util.drop_key.name}!')
