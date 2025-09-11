@@ -2,7 +2,7 @@ import random
 from data.items import item_pool
 from time import sleep
 from utils import get_input
-from data.enemies import enemy_pool
+from data.enemies import enemy_pool, bosses
 import inquirer
 
 '''
@@ -47,17 +47,32 @@ class MonsterRoom(Room):
 
     def interact(self, player, map_manager):
         if self.defeated:
-            print('The corpse of the monster lays dead in front of you')
+            self.description = 'The corpse of the monster lays dead in front of you'
         else:
-            fight = get_input(f"Do you want to fight it? (E)")
+            fight = get_input(f"Do you want to fight {self.enemy_name}? (E)")
+
             if fight.lower() == 'e':
                 print('\nThe fight has started!')
                 self.enemy_util = self.enemy[self.enemy_name]
+
                 while player.health['base'] > 0 and self.enemy_util.health > 0:
                     self.enemy_util.health -= player.damage['base']
                     player.health['base'] -= self.enemy_util.damage
+
+                    if player.health['base'] <= 0:
+                        player.health['base'] = 0
+                    elif self.enemy_util.health <= 0:
+                        self.enemy_util.health = 0
+
                     print(f"Your health: {player.health['base']}, Monster's health: {self.enemy_util.health}")
                     sleep(1)
+                if player.health['base'] <= 0:
+                    print('You have been defeated by the monster...')
+                    map_manager.game_over()
+                elif self.enemy_util.health <= 0:
+                    print('You have defeated the monster!')
+                    self.defeated = True
+                    self.description = 'The corpse of the monster lays dead in front of you'
             else:
                 print('You chose to not fight the monster.')
         # If defeated: print remains
@@ -153,26 +168,45 @@ class PortalRoom(Room):
 class BossRoom(Room):
     def __init__(self, pos):
         super().__init__(pos)
-        self.description = "The Final Boss awaits!"
+        self.description = "The boss of this floor awaits you!"
         self.defeated = False
+        # self.enemies_to_fight = 1
+        self.enemy_pool = random.sample(list(sorted(bosses)), k=1)
+        self.enemy_pool = [bosses[self.enemy_pool[0]]]
+        self.enemy_name = self.enemy_pool[0].name
+        self.enemy = {str(self.enemy_name): self.enemy_pool[0]}
 
     def interact(self, player, map_manager):
         if self.defeated:
-            print('The remains of the large boss lay here in this room.')
+            self.description = 'The corpse of the boss lays dead, broken in front of you'
         else:
-            fight = get_input("Do you want to fight it? (E)")
+            fight = get_input(f"Do you want to fight {self.enemy_name}? (E)")
+
             if fight.lower() == 'e':
-                print('The fight has started!')
-                self.hp -= player.damage
-                player.health -= self.damage
+                print('\nThe fight has started!')
+                self.enemy_util = self.enemy[self.enemy_name]
+
+                while player.health['base'] > 0 and self.enemy_util.health > 0:
+                    self.enemy_util.health -= player.damage['base']
+                    player.health['base'] -= self.enemy_util.damage
+                    if player.health['base'] <= 0:
+                        player.health['base'] = 0
+                    elif self.enemy_util.health <= 0:
+                        self.enemy_util.health = 0
+                    print(f"Your health: {player.health['base']}, Boss's health: {self.enemy_util.health}")
+                    sleep(1)
+
+                if player.health['base'] <= 0:
+                    print('You have been defeated by the boss...')
+                    map_manager.game_over()
+                elif self.enemy_util.health <= 0:
+                    print('You have defeated the boss!')
+                    self.defeated = True
+                    self.description = 'The corpse of the monster lays dead in front of you'
+                    player.inventory[self.enemy_util.drop_key.name] = self.enemy_util.drop_key
+                    print(f'You found a {self.enemy_util.drop_key.name}!')
             else:
-                print('You chose to not fight the boss.')
-        # If defeated: show message
-        # Else:
-        #   Ask player to fight
-        #   If yes: simulate boss fight (lose HP), mark as defeated
-        #   Else: skip fight
-        pass
+                print('You chose to not fight the monster.')
 
 class LootRoom(Room):
     def __init__(self, pos):

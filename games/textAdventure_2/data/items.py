@@ -42,7 +42,12 @@ class Item:
             player.damage['temp'] += self.effect_value
         elif self.effect_type == 'temp_defense':
             player.total_str['temp'] += self.effect_value
-        
+
+class Key(Item):
+    def __init__(self, name, level):
+        super().__init__(name, None, None, None, None)
+        self.level = level
+        self.cost = self.level * 5
 
 item_pool = [
     Item("Sword","att_weapon", 10, "attack", 2),
@@ -52,5 +57,11 @@ item_pool = [
     Item("Leather Helmet","head_armor", 7, "defense", 1),
     Item("Big Health Potion", "potion", 10, "heal", 25),
     Item("Strength Potion","potion", 9, "temp_attack", 5),
-    Item("Defense Potion","potion", 9, "temp_defense", 5)
+    Item("Defense Potion","potion", 9, "temp_defense", 5),
+]
+
+enemy_item_pool = [
+    Item("Venom", "potion", 5, 'temp_attack', 3),
+    Item("Ghostly Jar", "potion", 7, 'temp_defense', 4),
+    Item('Iron Plate', 'body_armor', 15, 'defense', 6),
 ]

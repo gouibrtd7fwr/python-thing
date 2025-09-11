@@ -114,3 +114,6 @@ class MapManager:
     #     # Change current_floor to floor_number (if valid)
     #     # Ensure that floor's rooms are initialized
     #     pass
+    def game_over(self):
+        print("You have lost all your health. Game Over.")
+        exit()

@@ -57,7 +57,10 @@ class Player:
 
             for i, key in enumerate(keys, 1):
                 item = inv[key]
-                print(f"{i}. {item.name} | Type: {item.type} | Effect: {item.effect_type} +{item.effect_value} | Cost: {item.cost}")
+                if item.type == None: 
+                    print(f"{i}. {item.name} | Level: {item.level} | Cost: {item.cost}")
+                else:
+                    print(f"{i}. {item.name} | Type: {item.type} | Effect: {item.effect_type} +{item.effect_value} | Cost: {item.cost}")
 
             usage = get_input("Do you want to use an item? (y/n)")
             if usage == "y":
