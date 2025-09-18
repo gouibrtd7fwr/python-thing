@@ -50,18 +50,18 @@ class Key(Item):
         self.cost = self.level * 5
 
 item_pool = [
-    Item("Sword","att_weapon", 10, "attack", 2),
-    Item("Shield","def_weapon", 8, "defense", 2),
-    Item("Small Health Potion", "potion", 5, "heal", 10),
-    Item("Axe","att_weapon", 12, "attack", 3),
-    Item("Leather Helmet","head_armor", 7, "defense", 1),
-    Item("Big Health Potion", "potion", 10, "heal", 25),
-    Item("Strength Potion","potion", 9, "temp_attack", 5),
-    Item("Defense Potion","potion", 9, "temp_defense", 5),
+    Item("Sword","att_weapon", 10, "attack", 4),
+    Item("Shield","def_weapon", 8, "defense", 3),
+    Item("Small Health Potion", "potion", 5, "heal", 15),
+    Item("Axe","att_weapon", 12, "attack", 5),
+    Item("Leather Helmet","head_armor", 7, "defense", 2),
+    Item("Big Health Potion", "potion", 10, "heal", 30),
+    Item("Strength Potion","potion", 9, "temp_attack", 7),
+    Item("Defense Potion","potion", 9, "temp_defense", 7),
 ]
 
 enemy_item_pool = [
-    Item("Venom", "potion", 5, 'temp_attack', 3),
-    Item("Ghostly Jar", "potion", 7, 'temp_defense', 4),
+    Item("Venom", "potion", 5, 'temp_attack', 4),
+    Item("Ghostly Jar", "potion", 7, 'temp_defense', 5),
     Item('Iron Plate', 'body_armor', 15, 'defense', 6),
 ]

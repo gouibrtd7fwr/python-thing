@@ -1,4 +1,4 @@
-from data.floors import floor_1
+from data.floors import floor_1, floor_2
 from room import EmptyRoom, MonsterRoom, StoreRoom, PortalRoom, BossRoom, LootRoom
 
 class MapManager:
@@ -9,10 +9,12 @@ class MapManager:
         # Set current floor to 1
         # Make sure the current floor's rooms are initialized
         self.floors = {
-            1: {"layout": floor_1, "rooms": {}}
+            1: {"layout": floor_1, "rooms": {}},
+            2: {"layout": floor_2, "rooms": {}}
         }
         self.current_floor = 1
-        self.__ensure_rooms_initialized(self.current_floor)
+        for floor in self.floors.keys():
+            self.__ensure_rooms_initialized(floor)
 
     def __ensure_rooms_initialized(self, floor_number):
             floor_data = self.floors[floor_number]

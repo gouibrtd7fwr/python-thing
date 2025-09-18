@@ -12,9 +12,9 @@ class Player:
         # self.name = name
         self.health = {"base": 100, "temp": 0, "maximum": 100}
         self.damage = {"base": 5, "temp": 0}
-        self.weapon = {"name": "Fists", "strength": 0}
+        self.weapon = {"name": "Fists", "strength": 2}
         self.offhand = {"name": "Nothing", "strength": 0}
-        self.inventory = {}
+        self.inventory = {'Entrance Key': Key('Entrance Key', 1)}
         self.cash = 15
         self.armor = {
             "head": {"name": "", "strength": 0},
@@ -57,15 +57,19 @@ class Player:
 
             for i, key in enumerate(keys, 1):
                 item = inv[key]
-                if item.type == None: 
+                if hasattr(item, 'level'):
                     print(f"{i}. {item.name} | Level: {item.level} | Cost: {item.cost}")
                 else:
                     print(f"{i}. {item.name} | Type: {item.type} | Effect: {item.effect_type} +{item.effect_value} | Cost: {item.cost}")
 
             usage = get_input("Do you want to use an item? (y/n)")
-            if usage == "y":
-                choices = [(item) for item in keys]
+            choices = [(item) for item in keys]
 
+            for i, key in enumerate(choices):
+                if key.find("Key") != -1:
+                    choices.pop(i)
+
+            if usage == "y" and len(choices) > 0:
                 questions = [
                     inquirer.List(
                         "item_chosen",
@@ -82,7 +86,9 @@ class Player:
 
                 index = choices.index(selected)
                 inv.pop(keys[index])
-        input("Press enter to continue.")
+            else:
+                print('\nNo item to use.')
+        input("\nPress enter to continue.")
         # - If empty: show message
         # - Else: list all items with name and effect
         # below is later implementation

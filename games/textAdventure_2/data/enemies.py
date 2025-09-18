@@ -19,7 +19,7 @@ class Boss(Enemy):
         # self.armor = armor
         # self.ability = ability
 keys = {
-    'fl1': Key('Level 1 Key', 1),
+    'fl2': Key('Level 2 Key', 2),
 }
 
 enemy_pool = [
@@ -29,5 +29,5 @@ enemy_pool = [
 ]
 
 bosses = {
-    'floor_1': Boss('Destroyer of Worlds', 200, 15, 1, 1, 25, "A giant dragon with 3 heads and 4 tails", keys['fl1']),
+    'floor_1': Boss('Destroyer of Worlds', 200, 15, 1, 1, 25, "A giant dragon with 3 heads and 4 tails", keys['fl2']),
 }

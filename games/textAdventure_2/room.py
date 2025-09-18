@@ -159,6 +159,39 @@ class PortalRoom(Room):
         self.description = "A glowing portal hums mysteriously."
 
     def interact(self, player, map_manager):
+        for i, keys in enumerate(player.inventory):
+            if hasattr(player.inventory[keys], 'level'):
+                print(f"You have a {player.inventory[keys].name} which can unlock floor {player.inventory[keys].level}!")
+
+        travel = get_input("Do you want to travel to another floor? (T)")
+        if travel.lower() == 't':
+            print('\nAvailable floors:')
+            available_floors = []
+
+            for i, keys in enumerate(player.inventory):
+                if hasattr(player.inventory[keys], 'level'):
+                    available_floors.append(player.inventory[keys].level)
+                    print(f"- Floor {player.inventory[keys].level}")
+
+            if len(available_floors) == 0:
+                print('You do not have any keys to travel to another floor.')
+            else:
+                floor_choice = int(get_input('Enter the floor number you want to travel to: '))
+                if floor_choice in available_floors and floor_choice != map_manager.current_floor:
+                    map_manager.current_floor = floor_choice
+                    
+                    player.position = map_manager.get_start_position()
+                    player.visited_rooms = [player.position]
+                    print(f'\nTraveling to floor {floor_choice}...')
+                elif floor_choice == map_manager.current_floor:
+                    print('You are already on this floor.')
+                else:
+                    print('You do not have the key for that floor.')
+                    
+        else:
+            print('You chose not to travel.')
+        # If no keys: show message and exit
+
         # Show available floors to travel (up/down)
         # Let player choose floor
         # If valid: switch map_manager floor and teleport player
@@ -204,11 +237,11 @@ class BossRoom(Room):
                     print('You have defeated the boss!')
                     self.defeated = True
                     player.cash += self.enemy_util.coin_amt
-                    self.description = 'The corpse of the monster lays dead in front of you'
+                    self.description = 'The corpse of the boss lays dead in front of you'
                     player.inventory[self.enemy_util.drop_key.name] = self.enemy_util.drop_key
                     print(f'You found a {self.enemy_util.drop_key.name}!')
             else:
-                print('You chose to not fight the monster.')
+                print('You chose to not fight the boss.')
 
 class LootRoom(Room):
     def __init__(self, pos):
