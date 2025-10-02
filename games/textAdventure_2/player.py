@@ -5,13 +5,14 @@ from utils import get_input
 import inquirer
 from data.items import *
 import time
+from map_manager import *
 
 class Player:
     def __init__(self, start_pos):
         # Initialize player attributes:
         # self.name = name
         self.health = {"base": 100, "temp": 0, "maximum": 100}
-        self.damage = {"base": 5, "temp": 0}
+        self.damage = {"base": 15455, "temp": 0}
         self.weapon = {"name": "Fists", "strength": 2}
         self.offhand = {"name": "Nothing", "strength": 0}
         self.inventory = {'Entrance Key': Key('Entrance Key', 1)}
@@ -23,7 +24,7 @@ class Player:
             "boot": {"name": "", "strength": 0},
         }
         self.position = start_pos
-        self.visited_rooms = [(0,0)]
+        self.visited_rooms = []
         self.total_str = {"base": 0, "temp": 0}#used for further calculations.
         # - position (start_pos)
         # - gold = 100
@@ -36,14 +37,18 @@ class Player:
         
         pass
 
+    def add_visited_rooms(self, map_manager):
+        for floor in map_manager.floors.keys():
+            self.visited_rooms.append([map_manager.get_start_position()])
+
     def calc_total_str(self):
         self.total_str['base'] = 0
         for part in self.armor.keys():
             self.total_str['base'] += self.armor[part]['strength']
 
-    def update_position(self, new_pos):
+    def update_position(self, new_pos, map_manager):
         self.position = new_pos
-        self.visited_rooms.append(new_pos)
+        self.visited_rooms[map_manager.current_floor - 1].append(new_pos)
 
 
     def show_inventory(self):
@@ -64,28 +69,30 @@ class Player:
 
             usage = get_input("Do you want to use an item? (y/n)")
             choices = [(item) for item in keys]
+            display_choices = []
 
             for i, key in enumerate(choices):
-                if key.find("Key") != -1:
-                    choices.pop(i)
+                if key.lower().find("key") == -1:
+                    # display_choices.pop(i)
+                    display_choices.append(choices[i])
 
-            if usage == "y" and len(choices) > 0:
+            if usage == "y" and len(display_choices) > 0:
                 questions = [
                     inquirer.List(
                         "item_chosen",
                         message = "Which item do you want to choose?",
-                        choices = choices
+                        choices = display_choices
                     )
                 ]
             
                 answers = inquirer.prompt(questions)
                 selected = answers["item_chosen"]
 
-                used = inv[selected]
+                used = self.inventory[selected]
                 used.apply(self)
 
                 index = choices.index(selected)
-                inv.pop(keys[index])
+                self.inventory.pop(keys[index])
             else:
                 print('\nNo item to use.')
         input("\nPress enter to continue.")

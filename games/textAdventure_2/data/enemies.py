@@ -29,5 +29,5 @@ enemy_pool = [
 ]
 
 bosses = {
-    'floor_1': Boss('Destroyer of Worlds', 200, 15, 1, 1, 25, "A giant dragon with 3 heads and 4 tails", keys['fl2']),
+    'floor_1': Boss('Destroyer of Worlds', 150, 10, 1, 1, 25, "A giant dragon with 3 heads and 4 tails", keys['fl2']),
 }

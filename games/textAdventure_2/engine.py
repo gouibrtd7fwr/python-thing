@@ -11,6 +11,7 @@ class GameEngine:
         self.map_manager = MapManager()  # Replace with actual MapManager instance
         self.player = Player(self.map_manager.get_start_position())       # Replace with Player starting at correct position
         self.running = True      # Replace with True
+        self.player.add_visited_rooms(self.map_manager)
         pass
 
     def run(self):
@@ -44,12 +45,12 @@ class GameEngine:
     def move_player(self, direction):
         pos = self.map_manager.calculate_new_position(self.player.position, direction)
         if self.map_manager.is_valid_position(pos):
-            self.player.update_position(pos)
+            self.player.update_position(pos, self.map_manager)
             room_type = self.map_manager.get_room(self.player.position)
 
             room_type.enter(self.player, self.map_manager, just_describe=True)
         else:
-            print('You can\'t move there!')
+            print("You can't move there!")
             input("Press Enter to continue...")
   
     def interact_room(self, room):

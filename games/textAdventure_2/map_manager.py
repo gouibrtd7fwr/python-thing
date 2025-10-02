@@ -16,6 +16,10 @@ class MapManager:
         for floor in self.floors.keys():
             self.__ensure_rooms_initialized(floor)
 
+    def __load_visited_rooms(self, player):
+        for floor in self.floors.keys():
+            player.visited_rooms[floor] = [player.position]
+
     def __ensure_rooms_initialized(self, floor_number):
             floor_data = self.floors[floor_number]
             if not floor_data['rooms']:
@@ -46,7 +50,7 @@ class MapManager:
 
     def display(self, player_pos, visited=None):
         layout = self.floors[self.current_floor]["layout"]
-        visited = visited or set()
+        visited = visited[self.current_floor - 1] or set()
 
         width = 7
         height = 5

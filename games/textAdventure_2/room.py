@@ -181,7 +181,7 @@ class PortalRoom(Room):
                     map_manager.current_floor = floor_choice
                     
                     player.position = map_manager.get_start_position()
-                    player.visited_rooms = [player.position]
+                    player.visited_rooms[map_manager.current_floor - 1].append(player.position)
                     print(f'\nTraveling to floor {floor_choice}...')
                 elif floor_choice == map_manager.current_floor:
                     print('You are already on this floor.')
