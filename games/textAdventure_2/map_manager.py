@@ -1,4 +1,4 @@
-from data.floors import floor_1, floor_2
+from data.floors import floor_1, floor_2, floor_3
 from room import EmptyRoom, MonsterRoom, StoreRoom, PortalRoom, BossRoom, LootRoom
 
 class MapManager:
@@ -10,7 +10,8 @@ class MapManager:
         # Make sure the current floor's rooms are initialized
         self.floors = {
             1: {"layout": floor_1, "rooms": {}},
-            2: {"layout": floor_2, "rooms": {}}
+            2: {"layout": floor_2, "rooms": {}},
+            3: {"layout": floor_3, "rooms": {}},
         }
         self.current_floor = 1
         for floor in self.floors.keys():
@@ -108,7 +109,7 @@ class MapManager:
         pass
 
     def get_room(self, pos):
-        result = self.floors[self.current_floor]["rooms"].get(pos, EmptyRoom(pos))
+        result = self.floors[self.current_floor]["rooms"].get(pos, EmptyRoom(pos, self.current_floor))
         # print(f"Getting room at position {pos} on floor {result}")
         return result
 

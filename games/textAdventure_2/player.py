@@ -12,7 +12,7 @@ class Player:
         # Initialize player attributes:
         # self.name = name
         self.health = {"base": 100, "temp": 0, "maximum": 100}
-        self.damage = {"base": 15455, "temp": 0}
+        self.damage = {"base": 5, "temp": 0}
         self.weapon = {"name": "Fists", "strength": 2}
         self.offhand = {"name": "Nothing", "strength": 0}
         self.inventory = {'Entrance Key': Key('Entrance Key', 1)}

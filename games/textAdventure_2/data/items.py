@@ -58,6 +58,9 @@ item_pool = [
     Item("Big Health Potion", "potion", 10, "heal", 30),
     Item("Strength Potion","potion", 9, "temp_attack", 7),
     Item("Defense Potion","potion", 9, "temp_defense", 7),
+    Item("ULTRAHEAL", "potion", 20, "heal", 100),
+    Item("Iron Chestplate", "body_armor", 15, "defense", 8),
+    Item('360° Spinning Sword', "att_weapon", 16, "attack", 7)
 ]
 
 enemy_item_pool = [

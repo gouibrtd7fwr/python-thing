@@ -162,7 +162,7 @@ class PortalRoom(Room):
     def interact(self, player, map_manager):
         for i, keys in enumerate(player.inventory):
             if hasattr(player.inventory[keys], 'level'):
-                print(f"You have a {player.inventory[keys].name} which can unlock floor {player.inventory[keys].level}!")
+                print(f"\nYou have a {player.inventory[keys].name} which can unlock floor {player.inventory[keys].level}!")
 
         travel = get_input("Do you want to travel to another floor? (T)")
         if travel.lower() == 't':
@@ -207,9 +207,9 @@ class BossRoom(Room):
         self.defeated = False
         # self.enemies_to_fight = 1
         boss_key = f'floor_{current_floor}'
-        self.real_boss = bosses[boss_key]
-        self.enemy_name = self.real_boss.name
-        self.enemy = {str(self.enemy_name): self.real_boss}
+        self.boss = bosses[boss_key]
+        self.enemy_name = self.boss.name
+        self.enemy = {str(self.enemy_name): self.boss}
 
     def interact(self, player, map_manager):
         if self.defeated:
