@@ -11,9 +11,10 @@ This is the class where you create multiple type of rooms. Use this for structur
 
 
 class Room:
-    def __init__(self, pos):
+    def __init__(self, pos, current_floor):
         self.pos = pos
         self.description = "A plain room."
+        self.current_floor = current_floor
 
     def enter(self, player, map_manager, just_describe=False):
         print('You are at', self.pos, 'Description:', self.description)
@@ -30,14 +31,14 @@ class Room:
 
 
 class EmptyRoom(Room):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, pos, current_floor):
+        super().__init__(pos, current_floor)
         self.description = "It's quiet and empty."
 
 
 class MonsterRoom(Room):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, pos, current_floor):
+        super().__init__(pos, current_floor)
         self.description = "A monster blocks your path!"
         self.defeated = False
         # self.enemies_to_fight = 1
@@ -85,8 +86,8 @@ class MonsterRoom(Room):
 
 
 class StoreRoom(Room):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, pos, current_floor):
+        super().__init__(pos, current_floor)
         self.items_to_sell = 3
         self.description = "You find a market with items for sale."
         self.item_pool = random.sample(item_pool, k=self.items_to_sell)
@@ -154,8 +155,8 @@ class StoreRoom(Room):
 
 
 class PortalRoom(Room):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, pos, current_floor):
+        super().__init__(pos, current_floor)
         self.description = "A glowing portal hums mysteriously."
 
     def interact(self, player, map_manager):
@@ -200,15 +201,15 @@ class PortalRoom(Room):
 
 
 class BossRoom(Room):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, pos, current_floor):
+        super().__init__(pos, current_floor)
         self.description = "The boss of this floor awaits you!"
         self.defeated = False
         # self.enemies_to_fight = 1
-        self.enemy_pool = random.sample(list(sorted(bosses)), k=1)
-        self.enemy_pool = [bosses[self.enemy_pool[0]]]
-        self.enemy_name = self.enemy_pool[0].name
-        self.enemy = {str(self.enemy_name): self.enemy_pool[0]}
+        boss_key = f'floor_{current_floor}'
+        self.real_boss = bosses[boss_key]
+        self.enemy_name = self.real_boss.name
+        self.enemy = {str(self.enemy_name): self.real_boss}
 
     def interact(self, player, map_manager):
         if self.defeated:
@@ -244,8 +245,8 @@ class BossRoom(Room):
                 print('You chose to not fight the boss.')
 
 class LootRoom(Room):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, pos, current_floor):
+        super().__init__(pos, current_floor)
         self.looted = False
         self.items_inside_chest = 1
         self.description = "You find a chest with something inside it..."
