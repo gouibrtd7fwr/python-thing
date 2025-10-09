@@ -1,4 +1,4 @@
-from data.floors import floor_1, floor_2
+from data.floors import floor_1, floor_2, floor_3
 from room import EmptyRoom, MonsterRoom, StoreRoom, PortalRoom, BossRoom, LootRoom
 
 class MapManager:
@@ -10,7 +10,8 @@ class MapManager:
         # Make sure the current floor's rooms are initialized
         self.floors = {
             1: {"layout": floor_1, "rooms": {}},
-            2: {"layout": floor_2, "rooms": {}}
+            2: {"layout": floor_2, "rooms": {}},
+            3: {"layout": floor_3, "rooms": {}},
         }
         self.current_floor = 1
         for floor in self.floors.keys():
@@ -23,12 +24,12 @@ class MapManager:
     def __ensure_rooms_initialized(self, floor_number):
             floor_data = self.floors[floor_number]
             if not floor_data['rooms']:
-                floor_data["rooms"] = self.__generate_rooms(floor_data["layout"])
+                floor_data["rooms"] = self.__generate_rooms(floor_data["layout"], floor_number)
         # If the floor's 'rooms' dict is empty:
         # - generate rooms using _generate_rooms()
         # - store them in the floor's 'rooms' field
 
-    def __generate_rooms(self, layout):
+    def __generate_rooms(self, layout, current_floor):
         room_types = {
             " ": EmptyRoom,
             "E": MonsterRoom,
@@ -41,7 +42,7 @@ class MapManager:
         rooms = {}
         for pos, symbol in layout.items():
             room_class = room_types.get(symbol, EmptyRoom)
-            rooms[pos] = room_class(pos)
+            rooms[pos] = room_class(pos, current_floor)
         return rooms
         # For each symbol in the layout:
         # - Map it to the corresponding room type
@@ -108,7 +109,7 @@ class MapManager:
         pass
 
     def get_room(self, pos):
-        result = self.floors[self.current_floor]["rooms"].get(pos, EmptyRoom(pos))
+        result = self.floors[self.current_floor]["rooms"].get(pos, EmptyRoom(pos, self.current_floor))
         # print(f"Getting room at position {pos} on floor {result}")
         return result
 
