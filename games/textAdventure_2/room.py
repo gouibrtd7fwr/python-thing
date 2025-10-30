@@ -51,15 +51,19 @@ class MonsterRoom(Room):
             self.description = 'The corpse of the monster lays dead in front of you'
         else:
             fight = get_input(f"Do you want to fight {self.enemy_name}? (E)")
+            player.defense = player.total_str['base'] + player.total_str['temp']
 
+            
             if fight.lower() == 'e':
                 print('\nThe fight has started!')
                 self.enemy_util = self.enemy[self.enemy_name]
 
                 while player.health['base'] > 0 and self.enemy_util.health > 0:
-                    self.enemy_util.health -= player.damage['base']
-                    player.health['base'] -= self.enemy_util.damage
-
+                    if player.health['base'] > 100:
+                        player.health['base'] = 100
+                    self.enemy_util.health -= player.damage['base'] + player.weapon['strength'] + player.damage['temp']
+                    if player.defense <= self.enemy_util.damage:
+                        player.health['base'] -= self.enemy_util.damage - player.defense
                     if player.health['base'] <= 0:
                         player.health['base'] = 0
                     elif self.enemy_util.health <= 0:
@@ -216,14 +220,18 @@ class BossRoom(Room):
             self.description = 'The corpse of the boss lays dead, broken in front of you'
         else:
             fight = get_input(f"Do you want to fight {self.enemy_name}? (E)")
-
+            player.defense = player.total_str['base'] + player.total_str['temp']
+                
             if fight.lower() == 'e':
                 print('\nThe fight has started!')
                 self.enemy_util = self.enemy[self.enemy_name]
 
                 while player.health['base'] > 0 and self.enemy_util.health > 0:
+                    if player.health['base'] > 100:
+                        player.health['base'] = 100
                     self.enemy_util.health -= player.damage['base'] + player.weapon['strength'] + player.damage['temp']
-                    player.health['base'] -= self.enemy_util.damage
+                    if player.defense <= self.enemy_util.damage:
+                        player.health['base'] -= self.enemy_util.damage - player.defense
                     if player.health['base'] <= 0:
                         player.health['base'] = 0
                     elif self.enemy_util.health <= 0:
