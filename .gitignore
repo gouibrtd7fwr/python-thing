@@ -158,4 +158,5 @@ profile_default/
 
 site/
 
-model/*
+models/*
+*.pt

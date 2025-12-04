@@ -1,0 +1,100 @@
+{
+    "living_things": 
+    {
+        "Person": 0,
+        "Cat": 15,
+        "Dog": 16,
+        "Horse": 17,
+        "Sheep": 18,
+        "Cow": 19,
+        "Elephant": 20,
+        "Bear": 21,
+        "Zebra": 22,
+        "Giraffe": 23,
+        "Bird": 14
+    },
+    "vehicles": 
+    {
+        "Bicycle": 1,
+        "Car": 2,
+        "Motorcycle": 3,
+        "Airplane": 4,
+        "Bus": 5,
+        "Train": 6,
+        "Truck": 7,
+        "Boat": 8,
+        "Skis": 30,
+        "Snowboard": 31,
+        "Skateboard": 36,
+        "Surfboard": 37
+    },
+    "food_and_drink": 
+    {
+        "Banana": 46,
+        "Apple": 47,
+        "Orange": 49,
+        "Broccoli": 50,
+        "Carrot": 51,
+        "Sandwich": 48,
+        "Hot Dog": 52,
+        "Pizza": 53,
+        "Donut": 54,
+        "Cake": 55,
+        "Bottle": 39,
+        "Wine Glass": 40,
+        "Cup": 41,
+        "Bowl": 45,
+        "Fork": 42,
+        "Knife": 43,
+        "Spoon": 44,
+        "Microwave": 68,
+        "Oven": 69,
+        "Toaster": 70,
+        "Refrigerator": 72,
+        "Sink": 71
+    },
+    "home_objects": 
+    {
+        "Couch": 57,
+        "Chair": 56,
+        "Bed": 59,
+        "Dining Table": 60,
+        "Toilet": 61,
+        "Backpack": 24,
+        "Handbag": 26,
+        "Suitcase": 28,
+        "Vase": 75,
+        "Potted Plant": 58,
+        "TV": 62,
+        "Laptop": 63,
+        "Remote": 65,
+        "Cell Phone": 67,
+        "Mouse": 64,
+        "Keyboard": 66,
+        "Clock": 74,
+        "Book": 73,
+        "Scissors": 76,
+        "Umbrella": 25,
+        "Tie": 27,
+        "Toothbrush": 79,
+        "Hair Dryer": 78
+    },
+    "sports_and_toys": 
+    {
+        "Frisbee": 29,
+        "Sports Ball": 32,
+        "Kite": 33,
+        "Baseball Bat": 34,
+        "Baseball Glove": 35,
+        "Tennis Racket": 38,
+        "Teddy Bear": 77
+    },
+    "outdoor": 
+    {
+        "Traffic Light": 9,
+        "Stop Sign": 11,
+        "Parking Meter": 12,
+        "Fire Hydrant": 10,
+        "Bench": 13
+    }
+}
