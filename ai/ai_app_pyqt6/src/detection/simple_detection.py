@@ -9,5 +9,5 @@ class SimpleDetection:
         return results
     def detect_object_from_nparray(self, nd_array):
         results = self.model.predict(nd_array)
-        print(results)
+        return results
     

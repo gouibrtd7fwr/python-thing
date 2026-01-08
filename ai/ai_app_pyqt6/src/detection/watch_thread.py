@@ -2,12 +2,14 @@ from PySide6.QtCore import QThread, Signal
 import numpy as np
 import cv2
 from .detection_thread import DetectionThread
+from ultralytics.utils.plotting import Annotator
+from src.detection.dataclass.detection_result import DetectionResult
 # self.video_thread.detection_signal.connect(self.update_image)
 
 class WatchThread(QThread):
     change_pixmap_signal = Signal(np.ndarray)
     detection_signal = Signal(np.ndarray)
-    def __init__(self, video_path, parent = None):
+    def __init__(self, video_path, main_window_instance, parent = None):
         super().__init__(parent)
         self.video_path = video_path
         self._is_Running = True
@@ -22,8 +24,12 @@ class WatchThread(QThread):
         self.ms_delay = int(1000/self.fps) if self.fps > 0 else 33
         cap.release()
 
-        self.detection_thread = DetectionThread('src/model/yolo11m.pt', self)
+        self.detection_thread = DetectionThread('src/models/yolo11m.pt', self)
         self.detection_thread.detection_result_signal.connect(self.trigger)
+
+        self.main_window_instance = main_window_instance
+        main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
+        self.detection_filter = list()
 
     def run(self):
         cap = cv2.VideoCapture(self.video_path)
@@ -52,5 +58,20 @@ class WatchThread(QThread):
         self._is_Running = False
         self.wait()
 
-    def trigger(self, result):
-        print(result)
+    def trigger(self, results: DetectionResult):
+        print(results)
+        for result in results.result:
+            annotator = Annotator(results.frame)
+            for box in result.boxes:
+                if int(box.cls) in self.detection_filter:
+                    coords = box.xyxy[0]
+                    label = result.names[int(box.cls)]
+                    annotator.box_label(coords, label)
+            
+            frame = annotator.result()
+            cv2.imwrite('DetectionResults.png', frame)
+
+
+    def filter_detection_data(self, data: list):
+        self.detection_filter = data
+        pass
