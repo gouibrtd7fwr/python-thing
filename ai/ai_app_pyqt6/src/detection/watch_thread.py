@@ -4,6 +4,8 @@ import cv2
 from .detection_thread import DetectionThread
 from ultralytics.utils.plotting import Annotator
 from src.detection.dataclass.detection_result import DetectionResult
+from src.utils.email import EmailThread
+import time
 # self.video_thread.detection_signal.connect(self.update_image)
 
 class WatchThread(QThread):
@@ -30,6 +32,10 @@ class WatchThread(QThread):
         self.main_window_instance = main_window_instance
         main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
         self.detection_filter = list()
+
+        self.email_thread = None
+        self.last_email_time = 0
+        self.email_cooldown = 30
 
     def run(self):
         cap = cv2.VideoCapture(self.video_path)
@@ -59,19 +65,40 @@ class WatchThread(QThread):
         self.wait()
 
     def trigger(self, results: DetectionResult):
-        print(results)
+        detected_objects = []
+        frame_modified = False
+
+        annotator = Annotator(results.frame)
         for result in results.result:
-            annotator = Annotator(results.frame)
             for box in result.boxes:
                 if int(box.cls) in self.detection_filter:
                     coords = box.xyxy[0]
                     label = result.names[int(box.cls)]
                     annotator.box_label(coords, label)
-            
-            frame = annotator.result()
-            cv2.imwrite('DetectionResults.png', frame)
 
+                    detected_objects.append(label)
+                    frame_modified = True
+
+        if frame_modified:
+            final_frame = annotator.result()
+            save_path = 'DetectionResults.png'
+            cv2.imwrite(save_path, final_frame)
+
+            current_time = time.time()
+            if (current_time - self.last_email_time) > self.email_cooldown:
+                self.send_email_notification(save_path, ','.join(set(detected_objects)))
+                self.last_email_time = current_time
+
+    def send_email_notification(self, image_path, labels):
+        self.email_thread = EmailThread(image_path, labels)
+        self.email_thread.finished_signal.connect(self.on_email_finished)
+        self.email_thread.start()
+
+    def on_email_finished(self, success, message):
+        if success:
+            print(f'Email sent successfully: {message}')
+        else:
+            print(f'Email failed to send: {message}')
 
     def filter_detection_data(self, data: list):
         self.detection_filter = data
-        pass
