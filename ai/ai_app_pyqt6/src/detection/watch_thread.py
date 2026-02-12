@@ -6,6 +6,8 @@ from ultralytics.utils.plotting import Annotator
 from src.detection.dataclass.detection_result import DetectionResult
 from src.utils.email import EmailThread
 import time
+from datetime import datetime
+
 # self.video_thread.detection_signal.connect(self.update_image)
 
 class WatchThread(QThread):
@@ -26,12 +28,14 @@ class WatchThread(QThread):
         self.ms_delay = int(1000/self.fps) if self.fps > 0 else 33
         cap.release()
 
-        self.detection_thread = DetectionThread('src/models/yolo11m.pt', self)
+        self.detection_thread = DetectionThread('models/yolo11m.pt', self)
         self.detection_thread.detection_result_signal.connect(self.trigger)
 
         self.main_window_instance = main_window_instance
         main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
         self.detection_filter = list()
+
+        main_window_instance.email_info_signal.connect(self.send_email_notification)
 
         self.email_thread = None
         self.last_email_time = 0
@@ -52,7 +56,7 @@ class WatchThread(QThread):
                 continue
 
             self.change_pixmap_signal.emit(frame)
-            if counter >= self.fps * 3:
+            if counter >= self.fps * self.email_cooldown:
                 self.detection_signal.emit(frame)
                 counter = 0
             
@@ -68,8 +72,8 @@ class WatchThread(QThread):
         detected_objects = []
         frame_modified = False
 
-        annotator = Annotator(results.frame)
         for result in results.result:
+            annotator = Annotator(results.frame)
             for box in result.boxes:
                 if int(box.cls) in self.detection_filter:
                     coords = box.xyxy[0]
@@ -81,7 +85,7 @@ class WatchThread(QThread):
 
         if frame_modified:
             final_frame = annotator.result()
-            save_path = 'DetectionResults.png'
+            save_path = f'DetectionResults_{datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}.png'
             cv2.imwrite(save_path, final_frame)
 
             current_time = time.time()
@@ -89,8 +93,8 @@ class WatchThread(QThread):
                 self.send_email_notification(save_path, ','.join(set(detected_objects)))
                 self.last_email_time = current_time
 
-    def send_email_notification(self, image_path, labels):
-        self.email_thread = EmailThread(image_path, labels)
+    def send_email_notification(self, image_path, labels, final_email_data: list):
+        self.email_thread = EmailThread(image_path, labels, final_email_data[0], final_email_data[1], final_email_data[2])
         self.email_thread.finished_signal.connect(self.on_email_finished)
         self.email_thread.start()
 

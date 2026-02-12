@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QPushButton, QLabel, QWidget, QHBoxLayout, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QPushButton, QLabel, QWidget, QHBoxLayout, QFileDialog, QLineEdit
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPixmap, QImage
 from .components.checkable_combo_box import CheckableComboBox
@@ -8,6 +8,7 @@ import itertools
 
 class MainWindow(QMainWindow):
     filter_detection_signal = Signal(list)
+    email_info_signal = Signal(str, str, str)
     def __init__(self):
         super().__init__()
 
@@ -27,10 +28,39 @@ class MainWindow(QMainWindow):
         )
         self.preview.setPixmap(QPixmap("ai/ai_app_pyqt6/thing.png"))
 
+        self.email_layout = QVBoxLayout()
+
+        self.sender_mail_box = QLineEdit()
+        self.sender_label = QLabel(text="Sender email")
+
+        self.receiver_mail_box = QLineEdit()
+        self.receiver_label = QLabel(text="Receiver email")
+
+        self.password_box = QLineEdit()
+        self.password_label = QLabel(text="App password")
+
+        self.set_mail_box = QPushButton('Set')
+
+        self.email_layout.addWidget(self.sender_label)
+        self.email_layout.addWidget(self.sender_mail_box)
+
+        self.email_layout.addWidget(self.receiver_label)
+        self.email_layout.addWidget(self.receiver_mail_box)
+
+        self.email_layout.addWidget(self.password_label)
+        self.email_layout.addWidget(self.password_box)
+
+        self.email_layout.addWidget(self.set_mail_box)
+        self.set_mail_box.clicked.connect(self.parse_email_data)
+
+        self.toolbar_layout = QVBoxLayout()
+        self.toolbar_layout.addLayout(self.button_layout)
+        self.toolbar_layout.addLayout(self.email_layout)
+
         main_scrn_layout = QHBoxLayout()
 
         main_scrn_layout.addWidget(self.preview)
-        main_scrn_layout.addLayout(self.button_layout)
+        main_scrn_layout.addLayout(self.toolbar_layout)
 
         widget = QWidget()
         widget.setLayout(main_scrn_layout)
@@ -39,7 +69,7 @@ class MainWindow(QMainWindow):
         # connections
         self.insert_file_btn.clicked.connect(self.open_file)
 
-        self.load_from_json('/home/tommy/Documents/GitHub/python-thing/ai/ai_app_pyqt6/src/data/detection_module.json')
+        self.load_from_json('ai/ai_app_pyqt6/src/data/detection_module.json')
         check_combobox_layout = self.update_combo_box()
         self.button_layout.addLayout(check_combobox_layout)
 
@@ -110,6 +140,12 @@ class MainWindow(QMainWindow):
         for instance in self.combo_box_instances:
             tmp_category_value.append(instance.currentData())
         filters = return_category_value = list(itertools.chain.from_iterable(tmp_category_value))
-        print(filters)
         self.filter_detection_signal.emit(filters)
         return return_category_value
+
+    def parse_email_data(self):
+        email_data = []
+
+        for i in range(self.email_layout.count()):
+            if isinstance(i, QLineEdit):
+                email_data.append(i.displayText)
