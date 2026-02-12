@@ -30,6 +30,7 @@ class WatchThread(QThread):
 
         self.detection_thread = DetectionThread('models/yolo11m.pt', self)
         self.detection_thread.detection_result_signal.connect(self.trigger)
+        self.main_window_instance.email_info_signal.connect(self.trigger)
 
         self.main_window_instance = main_window_instance
         main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
@@ -68,7 +69,7 @@ class WatchThread(QThread):
         self._is_Running = False
         self.wait()
 
-    def trigger(self, results: DetectionResult):
+    def trigger(self, results: DetectionResult, email_data: list):
         detected_objects = []
         frame_modified = False
 
@@ -90,7 +91,7 @@ class WatchThread(QThread):
 
             current_time = time.time()
             if (current_time - self.last_email_time) > self.email_cooldown:
-                self.send_email_notification(save_path, ','.join(set(detected_objects)))
+                self.send_email_notification(save_path, ','.join(set(detected_objects)), email_data)
                 self.last_email_time = current_time
 
     def send_email_notification(self, image_path, labels, final_email_data: list):
