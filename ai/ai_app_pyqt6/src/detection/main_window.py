@@ -8,7 +8,7 @@ import itertools
 
 class MainWindow(QMainWindow):
     filter_detection_signal = Signal(list)
-    email_info_signal = Signal(str, str, str)
+    email_info_signal = Signal(list)
     def __init__(self):
         super().__init__()
 

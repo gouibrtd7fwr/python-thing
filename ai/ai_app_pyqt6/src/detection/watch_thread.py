@@ -30,10 +30,10 @@ class WatchThread(QThread):
 
         self.detection_thread = DetectionThread('models/yolo11m.pt', self)
         self.detection_thread.detection_result_signal.connect(self.trigger)
-        self.main_window_instance.email_info_signal.connect(self.trigger)
 
         self.main_window_instance = main_window_instance
         main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
+        self.main_window_instance.email_info_signal.connect(self.trigger)
         self.detection_filter = list()
 
         main_window_instance.email_info_signal.connect(self.send_email_notification)
