@@ -146,6 +146,10 @@ class MainWindow(QMainWindow):
     def parse_email_data(self):
         email_data = []
 
-        for i in range(self.email_layout.count()):
-            if isinstance(i, QLineEdit):
-                email_data.append(i.displayText)
+        sender = self.sender_mail_box.text()
+        receiver = self.receiver_mail_box.text()
+        password = self.password_box.text()
+
+        email_data = [sender, receiver, password]
+        
+        self.email_info_signal.emit(email_data)

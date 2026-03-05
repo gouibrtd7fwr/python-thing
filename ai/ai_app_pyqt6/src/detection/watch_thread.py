@@ -32,11 +32,9 @@ class WatchThread(QThread):
         self.detection_thread.detection_result_signal.connect(self.trigger)
 
         self.main_window_instance = main_window_instance
-        main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
-        self.main_window_instance.email_info_signal.connect(self.trigger)
+        self.main_window_instance.filter_detection_signal.connect(self.filter_detection_data)
+        self.main_window_instance.email_info_signal.connect(self.update_email_data)
         self.detection_filter = list()
-
-        main_window_instance.email_info_signal.connect(self.send_email_notification)
 
         self.email_thread = None
         self.last_email_time = 0
@@ -69,7 +67,7 @@ class WatchThread(QThread):
         self._is_Running = False
         self.wait()
 
-    def trigger(self, results: DetectionResult, email_data: list):
+    def trigger(self, results: DetectionResult):
         detected_objects = []
         frame_modified = False
 
@@ -86,16 +84,17 @@ class WatchThread(QThread):
 
         if frame_modified:
             final_frame = annotator.result()
-            save_path = f'DetectionResults_{datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}.png'
+            time_stamp = datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')
+            save_path = f'DetectionResults_{time_stamp}.png'
             cv2.imwrite(save_path, final_frame)
 
             current_time = time.time()
             if (current_time - self.last_email_time) > self.email_cooldown:
-                self.send_email_notification(save_path, ','.join(set(detected_objects)), email_data)
+                self.send_email_notification(save_path, ','.join(set(detected_objects)))
                 self.last_email_time = current_time
 
-    def send_email_notification(self, image_path, labels, final_email_data: list):
-        self.email_thread = EmailThread(image_path, labels, final_email_data[0], final_email_data[1], final_email_data[2])
+    def send_email_notification(self, image_path, labels):
+        self.email_thread = EmailThread(image_path, labels, self.email_data[0], self.email_data[1], self.email_data[2])
         self.email_thread.finished_signal.connect(self.on_email_finished)
         self.email_thread.start()
 
@@ -107,3 +106,7 @@ class WatchThread(QThread):
 
     def filter_detection_data(self, data: list):
         self.detection_filter = data
+
+    def update_email_data(self, email_data: list):
+        self.email_data = email_data
+        print(f'eMail stored: {self.email_data}')
