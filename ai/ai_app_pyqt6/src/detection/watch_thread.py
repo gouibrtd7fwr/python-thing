@@ -40,6 +40,8 @@ class WatchThread(QThread):
         self.last_email_time = 0
         self.email_cooldown = 30
 
+        self.email_data = ["haitran050414@gmail.com", "haitran050414@gmail.com", "afyr pbuy rbny tfhn"]
+
     def run(self):
         cap = cv2.VideoCapture(self.video_path)
         if not cap:
@@ -68,24 +70,25 @@ class WatchThread(QThread):
         self.wait()
 
     def trigger(self, results: DetectionResult):
+        print('TRIGGERING')
         detected_objects = []
         frame_modified = False
+        print(self.detection_filter)
 
+        annotator = Annotator(results.frame)
         for result in results.result:
-            annotator = Annotator(results.frame)
             for box in result.boxes:
                 if int(box.cls) in self.detection_filter:
                     coords = box.xyxy[0]
                     label = result.names[int(box.cls)]
                     annotator.box_label(coords, label)
-
-                    detected_objects.append(label)
                     frame_modified = True
 
         if frame_modified:
             final_frame = annotator.result()
-            time_stamp = datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')
+            time_stamp = datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d_%H-%M-%S")
             save_path = f'DetectionResults_{time_stamp}.png'
+            
             cv2.imwrite(save_path, final_frame)
 
             current_time = time.time()
@@ -96,6 +99,8 @@ class WatchThread(QThread):
     def send_email_notification(self, image_path, labels, final_email_data: list):
         self.email_thread = EmailThread(image_path, labels, final_email_data[0], final_email_data[1], final_email_data[2])
         self.email_thread.finished_signal.connect(self.on_email_finished)
+        print(f"Email sent: {final_email_data[0]} --- {final_email_data[1]} --- {final_email_data[2]}")
+        print(f"The image path is: {image_path}")
         self.email_thread.start()
 
     def on_email_finished(self, success, message):
