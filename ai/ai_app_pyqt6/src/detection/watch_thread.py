@@ -90,11 +90,11 @@ class WatchThread(QThread):
 
             current_time = time.time()
             if (current_time - self.last_email_time) > self.email_cooldown:
-                self.send_email_notification(save_path, ','.join(set(detected_objects)))
+                self.send_email_notification(save_path, ','.join(set(detected_objects)), self.email_data)
                 self.last_email_time = current_time
 
-    def send_email_notification(self, image_path, labels):
-        self.email_thread = EmailThread(image_path, labels, self.email_data[0], self.email_data[1], self.email_data[2])
+    def send_email_notification(self, image_path, labels, final_email_data: list):
+        self.email_thread = EmailThread(image_path, labels, final_email_data[0], final_email_data[1], final_email_data[2])
         self.email_thread.finished_signal.connect(self.on_email_finished)
         self.email_thread.start()
 
