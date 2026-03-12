@@ -36,6 +36,13 @@ class WatchThread(QThread):
         self.main_window_instance.email_info_signal.connect(self.update_email_data)
         self.detection_filter = list()
 
+
+
+        self.send = "truongminh3107@gmail.com"
+        self.receiver = "truongminh9a7@gmail.com"
+        self.app_password = "awrb fpat nbbt jvwm"
+        self.email_data = [self.send, self.receiver, self.app_password]
+
         self.email_thread = None
         self.last_email_time = 0
         self.email_cooldown = 30
@@ -84,17 +91,18 @@ class WatchThread(QThread):
 
         if frame_modified:
             final_frame = annotator.result()
-            time_stamp = datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')
+            time_stamp = datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d_%H-%M-%S")
             save_path = f'DetectionResults_{time_stamp}.png'
+            
             cv2.imwrite(save_path, final_frame)
 
             current_time = time.time()
             if (current_time - self.last_email_time) > self.email_cooldown:
-                self.send_email_notification(save_path, ','.join(set(detected_objects)))
+                self.send_email_notification(save_path, ','.join(set(detected_objects)), self.email_data)
                 self.last_email_time = current_time
 
-    def send_email_notification(self, image_path, labels):
-        self.email_thread = EmailThread(image_path, labels, self.email_data[0], self.email_data[1], self.email_data[2])
+    def send_email_notification(self, image_path, labels, final_email_data: list):
+        self.email_thread = EmailThread(image_path, labels, final_email_data[0], final_email_data[1], final_email_data[2])
         self.email_thread.finished_signal.connect(self.on_email_finished)
         self.email_thread.start()
 
@@ -107,6 +115,6 @@ class WatchThread(QThread):
     def filter_detection_data(self, data: list):
         self.detection_filter = data
 
-    def update_email_data(self, email_data: list):
-        self.email_data = email_data
-        print(f'eMail stored: {self.email_data}')
+    def update_email_data(self, data):
+        self.email_data = data
+        print("Email data stored:", self.email_data)

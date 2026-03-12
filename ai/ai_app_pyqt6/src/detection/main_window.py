@@ -144,12 +144,19 @@ class MainWindow(QMainWindow):
         return return_category_value
 
     def parse_email_data(self):
-        email_data = []
-
+        
         sender = self.sender_mail_box.text()
         receiver = self.receiver_mail_box.text()
         password = self.password_box.text()
 
-        email_data = [sender, receiver, password]
+        if not sender or not receiver or not password:
+            return
         
+        email_data = [sender, receiver, password]
+
         self.email_info_signal.emit(email_data)
+        # for i in range(self.email_layout.count()):
+            
+        #     if isinstance(i, QLineEdit):
+                
+        #         email_data.append(i.displayText)
