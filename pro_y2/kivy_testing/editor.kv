@@ -1,6 +1,4 @@
 Root:
-    saved_csv: None
-
     BoxLayout:
         orientation: 'horizontal'
         BoxLayout:
@@ -10,8 +8,8 @@ Root:
                 text: 'Load'
                 on_release: root.show_load()
             Button:
-                text: 'Bar Chart'
-                on_release: root.bar_chart
+                text: 'Chart'
+                on_release: root.popup_chart_window()
 <LoadDialog>:
     BoxLayout:
         size: root.size
@@ -31,8 +29,18 @@ Root:
                 text: "Load"
                 on_release: root.load(filechooser.path, filechooser.selection)
 <ChartPopup>:
+
     BoxLayout:
         size: root.size
         pos: root.pos
         orientation: "vertical"
+
+        Button:
+            text: 'Pie'
+        Button:
+            text: 'Line'
+        Button:
+            text: 'Scatter'
+        Button:
+            text: 'Bar'
         

@@ -13,6 +13,9 @@ class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
+class ChartPopup(FloatLayout):
+    chart_type = ObjectProperty(None)
+
 class Root(FloatLayout):
     loadfile = ObjectProperty(None)
     saved_csv = ObjectProperty(None)
@@ -32,11 +35,11 @@ class Root(FloatLayout):
 
         self.dismiss_popup()
     
-    def bar_chart(self):
-        df = pd.read_csv(self.saved_csv)
-        ratings = df['User Rating'].value_counts()
-        ratings.plot(kind="bar")
-        plt.show()
+    def popup_chart_window(self):
+        content = ChartPopup(chart_type = None)
+        self._popup = Popup(title="Choose", content=content)
+
+        self._popup.open()
 
 class Editor(App):
     pass
@@ -44,6 +47,7 @@ class Editor(App):
 
 Factory.register('Root', cls=Root)
 Factory.register('LoadDialog', cls=LoadDialog)
+Factory.register('ChartPopup', cls=ChartPopup)
 
 
 if __name__ == '__main__':
