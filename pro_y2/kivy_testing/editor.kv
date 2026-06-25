@@ -29,18 +29,46 @@ Root:
                 text: "Load"
                 on_release: root.load(filechooser.path, filechooser.selection)
 <ChartPopup>:
-
     BoxLayout:
         size: root.size
         pos: root.pos
-        orientation: "vertical"
+        orientation: "horizontal"
+        BoxLayout:
+            size_hint_y: None
+            height: 500
+            orientation: "vertical"
 
-        Button:
-            text: 'Pie'
-        Button:
-            text: 'Line'
-        Button:
-            text: 'Scatter'
-        Button:
-            text: 'Bar'
-        
+            Button:
+                text: 'Line'
+                on_release: app.root.plot_data('line')
+            Button:
+                text: 'Scatter'
+                on_release: app.root.plot_data('scatter')
+            Button:
+                text: 'Bar'
+                on_release: app.root.plot_data('bar')
+        BoxLayout:
+            size_hint_y: None  
+            orientation: "vertical"
+
+            Spinner:
+                id: x_value_spinner
+                text: "X-axis Value"
+                values: app.root.find_numeric_parameters(app.root.saved_csv)
+                on_text: app.root.save_xy_values('x', self.text)
+                height: 150
+
+            MultiSelectSpinner:
+                id: x_axis_unique_spinner
+                values: app.root.find_unique(app.root.x_values)
+
+            Spinner:
+                id: y_value_spinner
+                text: "Y-axis Value"
+                values: app.root.find_numeric_parameters(app.root.saved_csv)
+                on_text: app.root.save_xy_values('y', self.text)
+                height: 150
+
+            DropDown:
+                id: y_axis_unique_spinner
+

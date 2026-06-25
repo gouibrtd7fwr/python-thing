@@ -1,24 +1,28 @@
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
-from kivy.properties import ObjectProperty
+from kivy.properties import ListProperty, ObjectProperty
+from kivy.uix.dropdown import DropDown
+from kivy.uix.button import Button
 from kivy.uix.popup import Popup
+from kivy.uix.togglebutton import ToggleButton
 
 import os
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import pandas as pd
-
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
 class ChartPopup(FloatLayout):
-    chart_type = ObjectProperty(None)
+    pass
 
 class Root(FloatLayout):
     loadfile = ObjectProperty(None)
     saved_csv = ObjectProperty(None)
+    x_values = ObjectProperty(None)
+    y_values = ObjectProperty(None)
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -30,16 +34,106 @@ class Root(FloatLayout):
         self._popup.open()
 
     def load(self, path, filename):
-        with open(os.path.join(path, filename[0])) as stream:
-            self.saved_csv = stream.read()
-
+        self.saved_csv = pd.read_csv(os.path.join(path, filename[0]))
+        self.x_values = None
+        self.y_values = None
         self.dismiss_popup()
     
     def popup_chart_window(self):
-        content = ChartPopup(chart_type = None)
+        content = ChartPopup()
         self._popup = Popup(title="Choose", content=content)
 
         self._popup.open()
+
+    def plot_data(self, type):
+        if self.saved_csv is None or self.saved_csv.empty:
+            print('No file loaded!')
+            return
+        if self.x_values not in self.saved_csv.columns or self.y_values not in self.saved_csv.columns:
+            print('Select X and Y columns!')
+            return
+        try:
+            self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type)
+            plt.show()
+        except Exception as e:
+            print('Cannot plot the selected columns:', e)
+
+    def find_numeric_parameters(self, dataframe=pd.DataFrame):
+        if dataframe.empty:
+            return []
+        final_dataframe = dataframe.select_dtypes(include=['int', 'float'])
+        return list(final_dataframe.columns)
+
+    def save_xy_values(self, axis, value):
+        if axis == 'x':
+            self.x_values = value
+        elif axis == 'y':
+            self.y_values = value
+        else:
+            print('Invalid axis!')
+
+    def find_unique(self, column):
+        if column:
+            return self.saved_csv[f"{column}"].unique().tolist()
+        else:
+            return ["X-axis not chosen!"]
+
+class MultiSelectSpinner(Button):
+    """Widget allowing to select multiple text options."""
+
+    dropdown = ObjectProperty(None)
+    """(internal) DropDown used with MultiSelectSpinner."""
+
+    values = ListProperty([])
+    """Values to choose from."""
+
+    selected_values = ListProperty([])
+    """List of values selected by the user."""
+
+    def __init__(self, **kwargs):
+        self.bind(dropdown=self.update_dropdown)
+        self.bind(values=self.update_dropdown)
+        super(MultiSelectSpinner, self).__init__(**kwargs)
+        self.bind(on_release=self.toggle_dropdown)
+
+    def toggle_dropdown(self, *args):
+        if self.dropdown.parent:
+            self.dropdown.dismiss()
+        else:
+            self.dropdown.open(self)
+
+    def update_dropdown(self, *args):
+        if not self.dropdown:
+            self.dropdown = DropDown()
+        values = self.values
+        if values:
+            if self.dropdown.children:
+                self.dropdown.clear_widgets()
+            for value2 in values:
+                print(value2)
+                b = Factory.MultiSelectOption(text=value2)
+                b.bind(state=self.select_value)
+                self.dropdown.add_widget(b)
+
+    def select_value(self, instance, value):
+        if value == 'down':
+            if instance.text not in self.selected_values:
+                self.selected_values.append(instance.text)
+        else:
+            if instance.text in self.selected_values:
+                self.selected_values.remove(instance.text)
+
+    def on_selected_values(self, instance, value):
+        if value:
+            self.text = ', '.join(value)
+        else:
+            self.text = ''
+
+
+class MultiSelectOption(ToggleButton):
+    """Option widget used by MultiSelectSpinner."""
+    pass
+
 
 class Editor(App):
     pass
@@ -48,6 +142,8 @@ class Editor(App):
 Factory.register('Root', cls=Root)
 Factory.register('LoadDialog', cls=LoadDialog)
 Factory.register('ChartPopup', cls=ChartPopup)
+Factory.register('MultiSelectSpinner', cls=MultiSelectSpinner)
+Factory.register('MultiSelectOption', cls=MultiSelectOption)
 
 
 if __name__ == '__main__':
