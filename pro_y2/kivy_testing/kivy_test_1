@@ -110,7 +110,6 @@ class MultiSelectSpinner(Button):
             if self.dropdown.children:
                 self.dropdown.clear_widgets()
             for value2 in values:
-                print(value2)
                 b = Factory.MultiSelectOption(text=value2)
                 b.bind(state=self.select_value)
                 self.dropdown.add_widget(b)
@@ -132,7 +131,12 @@ class MultiSelectSpinner(Button):
 
 class MultiSelectOption(ToggleButton):
     """Option widget used by MultiSelectSpinner."""
-    pass
+
+    def __init__(self, **kwargs):
+        text = kwargs.get('text')
+        if text is not None and not isinstance(text, str):
+            kwargs['text'] = str(text)
+        super(MultiSelectOption, self).__init__(**kwargs)
 
 
 class Editor(App):
