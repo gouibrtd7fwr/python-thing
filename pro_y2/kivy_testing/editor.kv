@@ -1,26 +1,33 @@
 Root:
     BoxLayout:
         orientation: 'horizontal'
+
         BoxLayout:
             size_hint_y: None
             height: 30
+
             Button:
                 text: 'Load'
                 on_release: root.show_load()
+
             Button:
                 text: 'Chart'
                 on_release: root.popup_chart_window()
+
+
 <LoadDialog>:
     BoxLayout:
         size: root.size
         pos: root.pos
         orientation: "vertical"
+
         FileChooserListView:
             id: filechooser
 
         BoxLayout:
             size_hint_y: None
             height: 30
+
             Button:
                 text: "Cancel"
                 on_release: root.cancel()
@@ -28,47 +35,67 @@ Root:
             Button:
                 text: "Load"
                 on_release: root.load(filechooser.path, filechooser.selection)
+
+
 <ChartPopup>:
     BoxLayout:
-        size: root.size
-        pos: root.pos
         orientation: "horizontal"
+
         BoxLayout:
-            size_hint_y: None
-            height: 500
             orientation: "vertical"
+            size_hint_x: .35
 
             Button:
-                text: 'Line'
-                on_release: app.root.plot_data('line')
-            Button:
-                text: 'Scatter'
-                on_release: app.root.plot_data('scatter')
-            Button:
-                text: 'Bar'
-                on_release: app.root.plot_data('bar')
-        BoxLayout:
-            size_hint_y: None  
-            orientation: "vertical"
+                text: "Line"
+                on_release: app.root.plot_data("line")
 
-            Spinner:
-                id: x_value_spinner
-                text: "X-axis Value"
-                values: app.root.find_numeric_parameters(app.root.saved_csv)
-                on_text: app.root.save_xy_values('x', self.text)
-                height: 150
+            Button:
+                text: "Scatter"
+                on_release: app.root.plot_data("scatter")
+
+            Button:
+                text: "Bar"
+                on_release: app.root.plot_data("bar")
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 10
+            padding: 10
+
+            Label:
+                text: "X-axis (Multiple Columns)"
+                size_hint_y: None
+                height: 30
 
             MultiSelectSpinner:
-                id: x_axis_unique_spinner
-                values: app.root.find_unique(app.root.x_values)
+                id: x_spinner
+                values: app.root.find_columns()
+                on_selected_values: app.root.save_xy_values("x", self.selected_values)
 
             Spinner:
-                id: y_value_spinner
-                text: "Y-axis Value"
+                id: x_values_spinner
+                text: "Types"
+                values: ['min', 'max', 'avg', 'std']
+                on_text: app.root.save_xy_values("x_type", self.text)
+
+            Label:
+                text: "Y-axis"
+                size_hint_y: None
+                height: 30
+
+            Spinner:
+                id: y_spinner
+                text: "Choose Y-axis"
                 values: app.root.find_numeric_parameters(app.root.saved_csv)
-                on_text: app.root.save_xy_values('y', self.text)
-                height: 150
+                on_text: app.root.save_xy_values("y", self.text)
 
-            DropDown:
-                id: y_axis_unique_spinner
 
+<MultiSelectSpinner>:
+    text: "Choose X-axis"
+    size_hint_y: None
+    height: "44dp"
+
+
+<MultiSelectOption>:
+    size_hint_y: None
+    height: "40dp"

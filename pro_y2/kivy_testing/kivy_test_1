@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
-from kivy.properties import ListProperty, ObjectProperty
+from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
@@ -21,8 +21,14 @@ class ChartPopup(FloatLayout):
 class Root(FloatLayout):
     loadfile = ObjectProperty(None)
     saved_csv = ObjectProperty(None)
-    x_values = ObjectProperty(None)
+    x_values = ListProperty([])
     y_values = ObjectProperty(None)
+    x_selected_type = StringProperty("")
+
+    # ________________________----------------------------
+    def find_columns(self):
+        return self.find_numeric_parameters(self.saved_csv)
+    # ________________________----------------------------
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -35,9 +41,10 @@ class Root(FloatLayout):
 
     def load(self, path, filename):
         self.saved_csv = pd.read_csv(os.path.join(path, filename[0]))
-        self.x_values = None
+        self.x_values = []   # must be a list
         self.y_values = None
         self.dismiss_popup()
+
     
     def popup_chart_window(self):
         content = ChartPopup()
@@ -49,14 +56,25 @@ class Root(FloatLayout):
         if self.saved_csv is None or self.saved_csv.empty:
             print('No file loaded!')
             return
-        if self.x_values not in self.saved_csv.columns or self.y_values not in self.saved_csv.columns:
+        if not self.x_values or self.y_values not in self.saved_csv.columns:
             print('Select X and Y columns!')
             return
         try:
-            self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type)
+            for x_col in self.x_values:
+                if x_col in self.saved_csv.columns and self.x_selected_type:
+                    if self.x_selected_type == 'min':
+                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
+                    elif self.x_selected_type == 'max':
+                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
+                    elif self.x_selected_type == 'avg':
+                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
+                    elif self.x_selected_type == 'std':
+                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
+            plt.legend()
             plt.show()
         except Exception as e:
             print('Cannot plot the selected columns:', e)
+
 
     def find_numeric_parameters(self, dataframe=pd.DataFrame):
         if dataframe.empty:
@@ -66,11 +84,14 @@ class Root(FloatLayout):
 
     def save_xy_values(self, axis, value):
         if axis == 'x':
-            self.x_values = value
+            self.x_values = value if isinstance(value, list) else [value]
         elif axis == 'y':
             self.y_values = value
+        elif axis == 'x_type':
+            self.x_selected_type = value if isinstance(value, str) else value.str()
         else:
             print('Invalid axis!')
+
 
     def find_unique(self, column):
         if column:
@@ -110,6 +131,7 @@ class MultiSelectSpinner(Button):
             if self.dropdown.children:
                 self.dropdown.clear_widgets()
             for value2 in values:
+                print(value2)
                 b = Factory.MultiSelectOption(text=value2)
                 b.bind(state=self.select_value)
                 self.dropdown.add_widget(b)
@@ -131,12 +153,7 @@ class MultiSelectSpinner(Button):
 
 class MultiSelectOption(ToggleButton):
     """Option widget used by MultiSelectSpinner."""
-
-    def __init__(self, **kwargs):
-        text = kwargs.get('text')
-        if text is not None and not isinstance(text, str):
-            kwargs['text'] = str(text)
-        super(MultiSelectOption, self).__init__(**kwargs)
+    pass
 
 
 class Editor(App):
@@ -152,3 +169,11 @@ Factory.register('MultiSelectOption', cls=MultiSelectOption)
 
 if __name__ == '__main__':
     Editor().run()
+
+"""
+Spinner:
+                id: y_spinner
+                text: "Choose Y-axis"
+                values: app.root.find_numeric_parameters(app.root.saved_csv)
+                on_text: app.root.save_xy_values("y", self.text)
+"""
