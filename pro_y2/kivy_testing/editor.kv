@@ -72,12 +72,6 @@ Root:
                 values: app.root.find_columns()
                 on_selected_values: app.root.save_xy_values("x", self.selected_values)
 
-            Spinner:
-                id: x_values_spinner
-                text: "Types"
-                values: ['min', 'max', 'avg', 'std']
-                on_text: app.root.save_xy_values("x_type", self.text)
-
             Label:
                 text: "Y-axis"
                 size_hint_y: None

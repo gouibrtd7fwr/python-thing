@@ -8,8 +8,10 @@ from kivy.uix.popup import Popup
 from kivy.uix.togglebutton import ToggleButton
 
 import os
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import sympy
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -52,7 +54,7 @@ class Root(FloatLayout):
 
         self._popup.open()
 
-    def plot_data(self, type):
+    def plot_data(self, chart_type):
         if self.saved_csv is None or self.saved_csv.empty:
             print('No file loaded!')
             return
@@ -62,14 +64,7 @@ class Root(FloatLayout):
         try:
             for x_col in self.x_values:
                 if x_col in self.saved_csv.columns and self.x_selected_type:
-                    if self.x_selected_type == 'min':
-                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
-                    elif self.x_selected_type == 'max':
-                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
-                    elif self.x_selected_type == 'avg':
-                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
-                    elif self.x_selected_type == 'std':
-                        self.saved_csv.plot(x=self.x_values, y=self.y_values, kind=type, label=x_col)
+                    self.saved_csv.plot(x=x_col, y=self.y_values, kind=chart_type, label=x_col)
             plt.legend()
             plt.show()
         except Exception as e:
@@ -98,6 +93,40 @@ class Root(FloatLayout):
             return self.saved_csv[f"{column}"].unique().tolist()
         else:
             return ["X-axis not chosen!"]
+
+    def divide_into_parts(self, column):
+        if column is None or column not in self.saved_csv.columns:
+            return [], []
+
+        unique_vals = self.saved_csv[column].unique()
+        n_unique = len(unique_vals)
+
+        if n_unique <= 15:
+            return [], []
+
+        factors = sympy.primefactors(n_unique)
+        chunk_size = min(factors) if factors else 2
+
+        sorted_vals = np.sort(unique_vals)
+        chunks = [sorted_vals[i:i+chunk_size] for i in range(0, n_unique, chunk_size)]
+
+        x_values = []
+        y_values = []
+        
+        for chunk_vals in chunks:
+            mask = self.saved_csv[column].isin(chunk_vals)
+            chunk_data = self.saved_csv.loc[mask]
+            avg_y = chunk_data[self.y_values].mean()
+            
+            x_rep = f"{chunk_vals[0]} - {chunk_vals[-1]}"
+            
+            x_values.append(x_rep)
+            y_values.append(avg_y)
+
+        self.saved_csv[x_values] = x_values
+        self.saved_csv[y_values] = y_values
+        return x_values, y_values
+
 
 class MultiSelectSpinner(Button):
     """Widget allowing to select multiple text options."""
@@ -169,11 +198,3 @@ Factory.register('MultiSelectOption', cls=MultiSelectOption)
 
 if __name__ == '__main__':
     Editor().run()
-
-"""
-Spinner:
-                id: y_spinner
-                text: "Choose Y-axis"
-                values: app.root.find_numeric_parameters(app.root.saved_csv)
-                on_text: app.root.save_xy_values("y", self.text)
-"""
