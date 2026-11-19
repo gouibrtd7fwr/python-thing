@@ -61,11 +61,15 @@ class Root(FloatLayout):
         if not self.x_values or self.y_values not in self.saved_csv.columns:
             print('Select X and Y columns!')
             return
+        if isinstance(self.x_values, str):
+            self.x_values = [self.x_values]
+        if isinstance(self.y_values, list):
+            self.y_values = self.y_values[0]
         try:
             for x_col in self.x_values:
                 if x_col in self.saved_csv.columns and self.x_selected_type:
                     self.saved_csv.plot(x=x_col, y=self.y_values, kind=chart_type, label=x_col)
-            plt.legend()
+            # plt.legend()
             plt.show()
         except Exception as e:
             print('Cannot plot the selected columns:', e)
@@ -102,7 +106,7 @@ class Root(FloatLayout):
         n_unique = len(unique_vals)
 
         if n_unique <= 15:
-            return [], []
+            return self.x_values, self.y_values
 
         factors = sympy.primefactors(n_unique)
         chunk_size = min(factors) if factors else 2
@@ -117,6 +121,8 @@ class Root(FloatLayout):
             mask = self.saved_csv[column].isin(chunk_vals)
             chunk_data = self.saved_csv.loc[mask]
             avg_y = chunk_data[self.y_values].mean()
+
+            print(f'{mask}, {chunk_data}, {avg_y}')
             
             x_rep = f"{chunk_vals[0]} - {chunk_vals[-1]}"
             

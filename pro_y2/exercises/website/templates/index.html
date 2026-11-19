@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+    <title>Bank</title>
+</head>
+<body>
+    <header>
+        <div class="header-footer-layout">
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Bank of Programming home">
+            </a>
+            <h1>Bank of Programming</h1>
+
+            <nav>
+                <a href="#products">Products</a>
+                <a href="#about">About</a>
+                <a href="#contacts">Contact</a>
+                <a href="{{url_for('login')}}">Login</a>
+            </nav>
+
+        </div>
+    </header>
+    <main>
+        <section id="products" class="products">
+            <h2>Our Products</h2>
+            <h3>Snippet Sharing</h3>
+            <p>A platform where people can share code snippets for people to use in their projects, included in Feather Code and can be used alone.</p>
+            <h3>Automatic Error Detector</h3>
+            <p>A program that automatically detects errors in code and helps you fix them with AI, along with being used by many IDEs and code editors, including our Feather Code.</p>
+            <h3>Feather Code</h3>
+            <p>A feature-packed lightweight IDE with many user-made extensions and language support. Feather Code is frequently used by over 20 million aspiring coders all around the world.</p>
+        </section>
+        <section id="about">
+            <h2>About Us</h2>
+            <p>We are an organization that aims to provide a easier way for new coders to enter the stage without having to learn for years.</p>
+        </section>
+        <section id="contacts" class="contacts">
+            <h2>Contact Us</h2>
+            <p>Contact our organization here.</p>
+            <ul>
+                <li>Email: <a href="mailto:bankofprogramming@prog.com">bankofprogramming@prog.com</a></li>
+                <li>Phone: <a href="tel:+84963250695">+84 963250695</a></li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <div class="header-footer-layout">
+            <h1>Bank of Programming</h1>
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Bank of Programming home">
+            </a>
+        </div>
+    </footer>
+</body>
+</html>

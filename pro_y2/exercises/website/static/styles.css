@@ -1,0 +1,73 @@
+.header-footer-layout {
+    display: flex;
+    justify-content: space-between;
+}
+
+img {
+    width: 100px;
+    height: 100px;
+}
+
+h1 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h2 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h3 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+p {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.products {
+    background-color: #ffb6c1;
+}
+
+.contacts {
+    background-color: #ffb6c1;
+}
+
+nav {
+    background-color: #ffc0cb;
+    display: flex;
+    align-items: center;
+    padding: 0.2rem 1rem;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+nav a {
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    border: 2px dashed #2c2c2c;
+}
+
+input {
+    width: 80%;
+    padding: 15px;
+    margin: 15px;
+    border: 4px solid #2c2c2c;
+    background: whitesmoke;
+    color: darkgrey;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button {
+    width: 80%;
+    padding: 15px;
+    border: 4px solid #2c2c2c;
+    background: #ffb6c1;
+    color: whitesmoke;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
